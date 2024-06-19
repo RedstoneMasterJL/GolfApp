@@ -25,7 +25,7 @@ struct GolfAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MapTestView()
         }
         .modelContainer(sharedModelContainer)
     }
