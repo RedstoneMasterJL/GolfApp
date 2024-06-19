@@ -10,22 +10,36 @@ import MapKit
 
 struct HoleMapView: View {
     
-    let middleOfGreenPosition = CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775)
-    let teePosition = CLLocation(latitude: 57.78032, longitude: 11.95332)
+    let greenPos: CLLocationCoordinate2D
+    let teePos: CLLocationCoordinate2D
+    let centerPos: CLLocationCoordinate2D
     
-    let middleFairway = CLLocationCoordinate2D(latitude:   57.78108, longitude: 11.950535)
-    
-    
-    @State var start = MapCameraPosition.region(
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude:  57.78032, longitude:  11.94218),
-            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+    init(greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
+        centerPos = CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
+        self.greenPos = greenPos
+        self.teePos = teePos
+        
+        start = MapCameraPosition.region(
+            MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude:  57.78032, longitude:  11.94218),
+                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            )
         )
-    )
-
+    }
+    
+    @State var start: MapCameraPosition
+    
     var body: some View {
         Map(position: $start) {
-            
+            Annotation("", coordinate: greenPos) {
+                Circle().fill(.green)
+            }
+            Annotation("", coordinate: centerPos) {
+                Image(systemName: "scope").foregroundStyle(.blue)
+            }
+            Annotation("", coordinate: teePos) {
+                Circle().fill(.yellow)
+            }
         }.mapStyle(.hybrid)
         .onAppear {
             setCameraHeading(heading: 0) //-60 funkar
@@ -33,7 +47,7 @@ struct HoleMapView: View {
     }
     
     func setCameraHeading(heading: CLLocationDirection) {
-        var camera = MapCamera.init(centerCoordinate: middleFairway, distance: start.camera?.distance ?? 1000)
+        var camera = MapCamera.init(centerCoordinate: centerPos, distance: start.camera?.distance ?? 1000)
         camera.heading = heading
         
         start = MapCameraPosition.camera(camera)
@@ -41,7 +55,7 @@ struct HoleMapView: View {
 }
 
 #Preview {
-    HoleMapView()
+    HoleMapView(greenPos: CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775), teePos: CLLocationCoordinate2D(latitude: 57.78032, longitude: 11.95332))
 }
 
 // ettans green CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775)
