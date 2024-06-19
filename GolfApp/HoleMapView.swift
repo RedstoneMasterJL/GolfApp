@@ -43,11 +43,32 @@ struct HoleMapView: View {
         }.mapStyle(.hybrid)
         .onAppear {
             setCameraHeading(heading: 0) //-60 funkar
+            /*
+             (11.95332-11.94775)/(57.78032-57.78184)
+             y2 - y1 / x2 - x1
+             = -3.66447368421
+             1 horisontellt 0 bäring
+             60/2 = 30
+             borde två vara 30
+             1 0
+             2 30
+             3 60
+             4 90
+             5 120
+             6 150
+             7 180
+             8 210
+             9 240
+             10 270
+             11 300
+             12 330
+             kanske??
+             */
         }
     }
     
     func setCameraHeading(heading: CLLocationDirection) {
-        var camera = MapCamera.init(centerCoordinate: centerPos, distance: start.camera?.distance ?? 1000)
+        var camera = MapCamera.init(centerCoordinate: centerPos, distance: start.camera?.distance ?? 2000)
         camera.heading = heading
         
         start = MapCameraPosition.camera(camera)
