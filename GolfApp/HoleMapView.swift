@@ -42,7 +42,8 @@ struct HoleMapView: View {
             }
         }.mapStyle(.hybrid)
         .onAppear {
-            setCameraHeading(heading: 0) //-60 funkar
+            let m = (teePos.longitude-greenPos.longitude)/(teePos.latitude-greenPos.latitude)
+            setCameraHeading(heading: m * 20) //-60 funkar
             /*
              (11.95332-11.94775)/(57.78032-57.78184)
              y2 - y1 / x2 - x1
@@ -63,6 +64,7 @@ struct HoleMapView: View {
              11 300
              12 330
              kanske??
+             blir då - 20
              */
         }
     }
