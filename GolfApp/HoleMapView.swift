@@ -42,7 +42,14 @@ struct HoleMapView: View {
             }
         }.mapStyle(.hybrid)
         .onAppear {
-            let m = (teePos.longitude-greenPos.longitude)/(teePos.latitude-greenPos.latitude)
+            var m: Double = 0
+            if teePos.longitude > greenPos.longitude {
+                m = (teePos.longitude-greenPos.longitude)/(teePos.latitude-greenPos.latitude)
+                print(m)
+            } else {
+                m = (teePos.latitude-greenPos.latitude)/(teePos.longitude-greenPos.longitude)
+                print(m)
+            }
             setCameraHeading(heading: m * 20) //-60 funkar
             /*
              (11.95332-11.94775)/(57.78032-57.78184)
@@ -65,6 +72,8 @@ struct HoleMapView: View {
              12 330
              kanske??
              blir då - 20
+             
+             FÅR NOG HITTA ETT BÄTTRE SÄTT
              */
         }
     }
@@ -78,7 +87,7 @@ struct HoleMapView: View {
 }
 
 #Preview {
-    HoleMapView(greenPos: CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775), teePos: CLLocationCoordinate2D(latitude: 57.78032, longitude: 11.95332))
+    HoleMapView(greenPos: holes[1].greenPos, teePos: holes[1].teePos)
 }
 
 // ettans green CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775)
@@ -115,3 +124,16 @@ struct HoleMapView: View {
  
  FUNKAR!
  */
+
+struct Hole {
+    let number: Int
+    let greenPos: CLLocationCoordinate2D
+    let teePos: CLLocationCoordinate2D
+}
+
+let holes = [
+
+    Hole(number: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775), teePos: CLLocationCoordinate2D(latitude: 57.78032, longitude: 11.95332)),
+    Hole(number: 2, greenPos: CLLocationCoordinate2D(latitude: 57.78239, longitude: 11.94944), teePos: CLLocationCoordinate2D(latitude: 57.78216, longitude: 11.94756))
+
+]
