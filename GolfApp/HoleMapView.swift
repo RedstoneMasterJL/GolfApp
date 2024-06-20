@@ -18,19 +18,22 @@ struct HoleMapView: View {
         centerPos = CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
         self.greenPos = greenPos
         self.teePos = teePos
+        //startCamPos = .camera(MapCamera(centerCoordinate: centerPos, distance: 400, heading: 80, pitch: 0))
         
-        start = MapCameraPosition.region(
-            MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude:  57.78032, longitude:  11.94218),
-                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-            )
-        )
+        let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
+        let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
+        //let centerLoc = CLLocation(latitude: centerPos.latitude, longitude: centerPos.longitude)
+        let distance = greenLoc.distance(from: teeLoc)
+        print(distance)
+        
+        startCamPos = .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: distance * 2.5)))
+        // möjligtvis att vi ändrar distance x 2.5 på eyeAltitude
+        
     }
-    
-    @State var start: MapCameraPosition
+    @State var startCamPos: MapCameraPosition
     
     var body: some View {
-        Map(position: $start) {
+        Map(position: $startCamPos) {
             Annotation("", coordinate: greenPos) {
                 Circle().fill(.green)
             }
@@ -40,54 +43,12 @@ struct HoleMapView: View {
             Annotation("", coordinate: teePos) {
                 Circle().fill(.yellow)
             }
-        }.mapStyle(.hybrid)
-        .onAppear {
-            var m: Double = 0
-            if teePos.longitude > greenPos.longitude {
-                m = (teePos.longitude-greenPos.longitude)/(teePos.latitude-greenPos.latitude)
-                print(m)
-            } else {
-                m = (teePos.latitude-greenPos.latitude)/(teePos.longitude-greenPos.longitude)
-                print(m)
-            }
-            setCameraHeading(heading: m * 20) //-60 funkar
-            /*
-             (11.95332-11.94775)/(57.78032-57.78184)
-             y2 - y1 / x2 - x1
-             = -3.66447368421
-             1 horisontellt 0 bäring
-             60/2 = 30
-             borde två vara 30
-             1 0
-             2 30
-             3 60
-             4 90
-             5 120
-             6 150
-             7 180
-             8 210
-             9 240
-             10 270
-             11 300
-             12 330
-             kanske??
-             blir då - 20
-             
-             FÅR NOG HITTA ETT BÄTTRE SÄTT
-             */
-        }
-    }
-    
-    func setCameraHeading(heading: CLLocationDirection) {
-        var camera = MapCamera.init(centerCoordinate: centerPos, distance: start.camera?.distance ?? 2000)
-        camera.heading = heading
-        
-        start = MapCameraPosition.camera(camera)
+        }.mapStyle(.imagery)
     }
 }
 
 #Preview {
-    HoleMapView(greenPos: holes[1].greenPos, teePos: holes[1].teePos)
+    HoleMapView(greenPos: holes[3].greenPos, teePos: holes[3].teePos)
 }
 
 // ettans green CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775)
@@ -134,6 +95,8 @@ struct Hole {
 let holes = [
 
     Hole(number: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775), teePos: CLLocationCoordinate2D(latitude: 57.78032, longitude: 11.95332)),
-    Hole(number: 2, greenPos: CLLocationCoordinate2D(latitude: 57.78239, longitude: 11.94944), teePos: CLLocationCoordinate2D(latitude: 57.78216, longitude: 11.94756))
+    Hole(number: 2, greenPos: CLLocationCoordinate2D(latitude: 57.78239, longitude: 11.94944), teePos: CLLocationCoordinate2D(latitude: 57.78216, longitude: 11.94756)),
+    Hole(number: 3, greenPos: CLLocationCoordinate2D(latitude: 57.78476, longitude: 11.94776), teePos: CLLocationCoordinate2D(latitude: 57.78260, longitude: 11.94981)),
+    Hole(number: 4, greenPos: CLLocationCoordinate2D(latitude: 57.78211, longitude: 11.94611), teePos: CLLocationCoordinate2D(latitude: 57.78496, longitude: 11.94720))
 
 ]
