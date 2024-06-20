@@ -43,18 +43,21 @@ struct GolfAppApp: App {
                                 hole = holes[currentHole-1]
                             }
                         }, label: {
-                            Text("- 1")
-                        })
+                            Image(systemName: "arrow.left")
+                        }).buttonStyle(.borderedProminent)
+                        Spacer()
                         Button(action: {
                             withAnimation{
                                 currentHole += 1
                                 hole = holes[currentHole-1]
                             }
                         }, label: {
-                            Text("+ 1")
-                        })
-                        Text("Current: \(currentHole)")
+                            Image(systemName: "arrow.right")
+                        }).buttonStyle(.borderedProminent)
                     }.background(.green).padding()
+                }
+                .safeAreaInset(edge: .top) {
+                    Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
                 }
         }
         .modelContainer(sharedModelContainer)
