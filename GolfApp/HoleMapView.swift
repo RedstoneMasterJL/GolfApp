@@ -10,87 +10,69 @@ import MapKit
 
 struct HoleMapView: View {
     
-    let greenPos: CLLocationCoordinate2D
-    let teePos: CLLocationCoordinate2D
-    let centerPos: CLLocationCoordinate2D
+    @Binding var hole: Hole
     
-    init(greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
-        centerPos = CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
-        self.greenPos = greenPos
-        self.teePos = teePos
-        //startCamPos = .camera(MapCamera(centerCoordinate: centerPos, distance: 400, heading: 80, pitch: 0))
-        
+    /*init(holeNumber: Binding<Int>, greenPos: Binding<CLLocationCoordinate2D>, teePos: Binding<CLLocationCoordinate2D>) {
+        let centerPos = CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
         let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
         let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
-        //let centerLoc = CLLocation(latitude: centerPos.latitude, longitude: centerPos.longitude)
-        let distance = greenLoc.distance(from: teeLoc)
-        print(distance)
+        let teeGreenDistance = greenLoc.distance(from: teeLoc)
+        print(teeGreenDistance)
         
-        startCamPos = .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: distance * 2.5)))
-        // möjligtvis att vi ändrar distance x 2.5 på eyeAltitude eller kanske inte
+        startCamPos = .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))
         
-    }
-    @State var startCamPos: MapCameraPosition
+        self.centerPos = centerPos
+        self.greenPos = greenPos
+        self.teePos = teePos
+        self.teeGreenDistance = teeGreenDistance
+
+    }*/
+    
     
     var body: some View {
-        Map(position: $startCamPos) {
+        Map(initialPosition: hole.startCamPos) {
             UserAnnotation()
-            Annotation("", coordinate: greenPos) {
+            Annotation("", coordinate: hole.greenPos) {
                 Circle().fill(.green)
             }
-            Annotation("", coordinate: centerPos) {
+            Annotation("", coordinate: hole.centerPos) {
                 Image(systemName: "scope").foregroundStyle(.blue)
             }
-            Annotation("", coordinate: teePos) {
+            Annotation("", coordinate: hole.teePos) {
                 Circle().fill(.yellow)
             }
-        }.mapStyle(.hybrid(elevation: .realistic))
+        }.mapStyle(.hybrid(elevation: .realistic))/*.onAppear {
+            resetStartCamPos()
+        }.onChange(of: holeNumber) {
+            resetStartCamPos()
+        }*/
     }
+    
+    /*func resetStartCamPos() {
+        startCamPos = .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))
+    }*/
 }
-
-#Preview {
-    HoleMapView(greenPos: holes[0].greenPos, teePos: holes[0].teePos)
-}
-
-// ettans green CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775)
-// ettans gul tee CLLocation(latitude: 57.78032, longitude: 11.95332)
-
-/*
- mitten av fairwayt
- 
- latitud green - latitud tee
- / 2
- sedan det plus teen
- 
- 57.78184 - 57.78032
- 0.00152 / 2
- 
- 0,00076
- 57.78032 + 0,00076
- 57,78108
- 
- longitud green - longitud tee
- / 2
- sedan det plus teen
-
- 11.94775 - 11.95332
- 
- −0,00557
- / 2
- 
- −0,002785
- 
- 11.95332 +  −0,002785
-
- 11.950535
- 
- FUNKAR!
- */
 
 struct Hole {
     let number: Int
     let greenPos: CLLocationCoordinate2D
     let teePos: CLLocationCoordinate2D
+    
+    // Center of fairway
+    var centerPos: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
+    }
+    
+    // Distance tee - green
+    var teeGreenDistance: Double {
+        let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
+        let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
+        return greenLoc.distance(from: teeLoc)
+    }
+
+    var startCamPos: MapCameraPosition {
+        .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))
+    }
 }
 
 let holes = [

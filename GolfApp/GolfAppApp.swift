@@ -23,9 +23,21 @@ struct GolfAppApp: App {
         }
     }()
 
+    @State var currentHole = 1
     var body: some Scene {
         WindowGroup {
-            TestView()
+            HoleMapView(hole: .constant(holes[currentHole-1]))
+                .safeAreaInset(edge: .bottom) {
+                    HStack {
+                        Button(action: {currentHole -= 1}, label: {
+                            Text("- 1")
+                        })
+                        Button(action: {currentHole += 1}, label: {
+                            Text("+ 1")
+                        })
+                        Text("Current: \(currentHole)")
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
     }
