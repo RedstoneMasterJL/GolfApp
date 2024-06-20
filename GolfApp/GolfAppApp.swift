@@ -26,15 +26,31 @@ struct GolfAppApp: App {
 
     @State var currentHole = 1
     
+    @State var hole: Hole
+    
+    init() {
+        self.hole = holes[0] // First hole
+    }
+    
     var body: some Scene {
         WindowGroup {
-            HoleMapView(hole: .constant(holes[currentHole-1]))
+            HoleMapView(hole: $hole)
                 .safeAreaInset(edge: .bottom) {
                     HStack {
-                        Button(action: {currentHole -= 1}, label: {
+                        Button(action: {
+                            withAnimation {
+                                hole = holes[(currentHole-1)-1]
+                                currentHole -= 1
+                            }
+                        }, label: {
                             Text("- 1")
                         })
-                        Button(action: {currentHole += 1}, label: {
+                        Button(action: {
+                            withAnimation{
+                                hole = holes[(currentHole+1)-1]
+                                currentHole += 1
+                            }
+                        }, label: {
                             Text("+ 1")
                         })
                         Text("Current: \(currentHole)")
