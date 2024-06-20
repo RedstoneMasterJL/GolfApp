@@ -27,13 +27,14 @@ struct HoleMapView: View {
         print(distance)
         
         startCamPos = .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: distance * 2.5)))
-        // möjligtvis att vi ändrar distance x 2.5 på eyeAltitude
+        // möjligtvis att vi ändrar distance x 2.5 på eyeAltitude eller kanske inte
         
     }
     @State var startCamPos: MapCameraPosition
     
     var body: some View {
         Map(position: $startCamPos) {
+            UserAnnotation()
             Annotation("", coordinate: greenPos) {
                 Circle().fill(.green)
             }
@@ -43,12 +44,12 @@ struct HoleMapView: View {
             Annotation("", coordinate: teePos) {
                 Circle().fill(.yellow)
             }
-        }.mapStyle(.imagery)
+        }.mapStyle(.hybrid(elevation: .realistic))
     }
 }
 
 #Preview {
-    HoleMapView(greenPos: holes[3].greenPos, teePos: holes[3].teePos)
+    HoleMapView(greenPos: holes[0].greenPos, teePos: holes[0].teePos)
 }
 
 // ettans green CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775)
