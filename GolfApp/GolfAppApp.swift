@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import MapKit
 
 @main
 struct GolfAppApp: App {
@@ -24,6 +25,7 @@ struct GolfAppApp: App {
     }()
 
     @State var currentHole = 1
+    
     var body: some Scene {
         WindowGroup {
             HoleMapView(hole: .constant(holes[currentHole-1]))

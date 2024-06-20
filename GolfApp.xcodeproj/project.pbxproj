@@ -15,6 +15,7 @@
 		76BB08122C2328E600A5C559 /* MapTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08112C2328E600A5C559 /* MapTestView.swift */; };
 		76BB08142C234A3400A5C559 /* HoleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08132C234A3400A5C559 /* HoleMapView.swift */; };
 		76BB08162C235BEE00A5C559 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08152C235BEE00A5C559 /* TestView.swift */; };
+		76BB08182C2494C600A5C559 /* Hole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08172C2494C600A5C559 /* Hole.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		76BB08112C2328E600A5C559 /* MapTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTestView.swift; sourceTree = "<group>"; };
 		76BB08132C234A3400A5C559 /* HoleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoleMapView.swift; sourceTree = "<group>"; };
 		76BB08152C235BEE00A5C559 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		76BB08172C2494C600A5C559 /* Hole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hole.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				76BB08022C23288300A5C559 /* ContentView.swift */,
 				76BB08112C2328E600A5C559 /* MapTestView.swift */,
 				76BB08132C234A3400A5C559 /* HoleMapView.swift */,
+				76BB08172C2494C600A5C559 /* Hole.swift */,
 				76BB08152C235BEE00A5C559 /* TestView.swift */,
 				76BB08042C23288300A5C559 /* Item.swift */,
 				76BB08062C23288600A5C559 /* Assets.xcassets */,
@@ -151,6 +154,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76BB08182C2494C600A5C559 /* Hole.swift in Sources */,
 				76BB08162C235BEE00A5C559 /* TestView.swift in Sources */,
 				76BB08032C23288300A5C559 /* ContentView.swift in Sources */,
 				76BB08122C2328E600A5C559 /* MapTestView.swift in Sources */,
