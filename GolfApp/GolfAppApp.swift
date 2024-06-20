@@ -54,10 +54,17 @@ struct GolfAppApp: App {
                         }, label: {
                             Image(systemName: "arrow.right")
                         }).buttonStyle(.borderedProminent)
-                    }.background(.green).padding()
+                    }.padding()//.background(.green)
                 }
                 .safeAreaInset(edge: .top) {
-                    Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
+                    HStack {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6)).frame(width: 60, height: 60)
+                            Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
+                        }
+                        Spacer()
+                    }.padding()
+                    
                 }
         }
         .modelContainer(sharedModelContainer)

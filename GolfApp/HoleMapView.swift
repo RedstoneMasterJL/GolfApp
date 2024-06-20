@@ -22,9 +22,9 @@ struct HoleMapView: View {
             Annotation("", coordinate: hole.greenPos) {
                 Circle().fill(.green)
             }
-            Annotation("", coordinate: hole.centerPos) {
-                Image(systemName: "scope").foregroundStyle(.blue)
-            }
+//            Annotation("", coordinate: hole.centerPos) {
+//                Image(systemName: "scope").foregroundStyle(.blue)
+//            }
             Annotation("", coordinate: hole.teePos) {
                 Circle().fill(.yellow)
             }
