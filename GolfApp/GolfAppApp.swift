@@ -39,22 +39,22 @@ struct GolfAppApp: App {
                     HStack {
                         Button(action: {
                             withAnimation {
-                                hole = holes[(currentHole-1)-1]
                                 currentHole -= 1
+                                hole = holes[currentHole-1]
                             }
                         }, label: {
                             Text("- 1")
                         })
                         Button(action: {
                             withAnimation{
-                                hole = holes[(currentHole+1)-1]
                                 currentHole += 1
+                                hole = holes[currentHole-1]
                             }
                         }, label: {
                             Text("+ 1")
                         })
                         Text("Current: \(currentHole)")
-                    }
+                    }.background(.green).padding()
                 }
         }
         .modelContainer(sharedModelContainer)
