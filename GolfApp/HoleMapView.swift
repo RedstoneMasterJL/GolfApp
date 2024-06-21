@@ -16,9 +16,7 @@ struct HoleMapView: View {
     @State var coordinate: CLLocationCoordinate2D?
     var body: some View {
         MapReader { proxy in
-            Map(position: Binding<MapCameraPosition>(get: {
-                .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
-            }, set: { newValue in }), interactionModes: modes) {
+            Map(position: $hole.startCamPos, interactionModes: modes) {
                 UserAnnotation()
                 Annotation("", coordinate: hole.greenPos) {
                     Circle().fill(.green)
@@ -84,14 +82,4 @@ struct DraggablePin: View {
 
 #Preview {
     HoleMapView(hole: .constant(holes[0]))
-}
-
-extension Binding {
-  func withDefault<T>(_ defaultValue: T) -> Binding<T> where Value == Optional<T> {
-    return Binding<T>(get: {
-      self.wrappedValue ?? defaultValue
-    }, set: { newValue in
-      self.wrappedValue = newValue
-    })
-  }
 }

@@ -30,7 +30,8 @@ struct Hole: Equatable {
     }
 
     var startCamPos: MapCameraPosition {
-        .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))
+        get { .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5))) }
+        set { }
     }
 }
 
