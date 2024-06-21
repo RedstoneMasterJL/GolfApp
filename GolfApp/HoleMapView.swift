@@ -18,9 +18,7 @@ struct HoleMapView: View {
         MapReader { proxy in
             Map(position: Binding<MapCameraPosition>(get: {
                 .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
-            }, set: { newValue in
-                
-            }), interactionModes: modes) {
+            }, set: { newValue in }), interactionModes: modes) {
                 UserAnnotation()
                 Annotation("", coordinate: hole.greenPos) {
                     Circle().fill(.green)
