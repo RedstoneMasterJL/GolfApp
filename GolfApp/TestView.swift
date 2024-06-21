@@ -4,7 +4,7 @@
 //
 //  Created by Jonathan Linder on 2024-06-19.
 //
-
+/*
 import SwiftUI
 import MapKit
 import Combine
@@ -130,7 +130,7 @@ final class MapSettings: ObservableObject {
     @Published var showElevation = 0
     @Published var showEmphasisStyle = 0
 }
-
+*/ 
 /*
  https://stackoverflow.com/questions/77354568/swiftui-mapkit-drag-annotation
 //
@@ -238,3 +238,101 @@ private extension MapProxy {
     }
 }
 */
+
+
+
+/*
+ https://www.youtube.com/watch?v=5Z7kYPnPbUE
+ //
+ //  HoleMapView.swift
+ //  GolfApp
+ //
+ //  Created by Jonathan Linder on 2024-06-19.
+ //
+
+ import SwiftUI
+ import MapKit
+
+ struct HoleMapView: View {
+     
+     @Binding var hole: Hole
+     let modes: MapInteractionModes = [.zoom, .pitch]
+     
+     @State var coordinate: CLLocationCoordinate2D = holes[0].centerPos
+     
+     var body: some View {
+         MapReader { proxy in
+             Map(position: Binding<MapCameraPosition>(get: {
+                 .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
+             }, set: { newValue in
+                 
+             }), interactionModes: modes) {
+                 UserAnnotation()
+                 Annotation("", coordinate: hole.greenPos) {
+                     Circle().fill(.green)
+                 }
+                 Annotation("", coordinate: hole.centerPos) {
+                     //Image(systemName: "scope").foregroundStyle(.blue)
+                     Pin(proxy: proxy, coordinates: $coordinate)
+                 }
+                 Annotation("", coordinate: hole.teePos) {
+                     Circle().fill(.yellow)
+                 }
+             }.mapStyle(.hybrid(elevation: .realistic))
+         }
+     }
+ }
+
+ #Preview {
+     HoleMapView(hole: .constant(holes[0]))
+ }
+
+ struct Pin: View {
+     var proxy: MapProxy
+     @Binding var coordinates: CLLocationCoordinate2D
+     @State private var isActive = false
+     @State private var translation: CGSize = .zero
+     
+     var body: some View {
+         GeometryReader { geometry in
+             let frame = geometry.frame(in: .global)
+             
+             Image(systemName: "location.circle.fill")
+                 .font(.largeTitle)
+                 .foregroundColor(isActive ? .blue : .red)
+                 .scaleEffect(isActive ? 1.3 : 1)
+                 .animation(.bouncy, value: isActive)
+                 .frame(width: 30, height: 30)
+                 .contentShape(Rectangle())
+                 .offset(translation)
+                 .gesture(
+                     LongPressGesture(minimumDuration: 0.2)
+                         .onEnded { _ in
+                             isActive = true
+                         }
+                         .simultaneously(with: DragGesture()
+                             .onChanged { value in
+                                 if isActive {
+                                     translation = value.translation
+                                 }
+                             }
+                             .onEnded { value in
+                                 if isActive {
+                                     isActive = false
+                                     
+                                     // Update coordinates and call the callback
+                                     let position = CGPoint(x: frame.midX + translation.width, y: frame.midY + translation.height)
+                                     if let coordinate = proxy.convert(position, from: .global) {
+                                         self.coordinates = coordinate
+                                         translation = .zero
+                                     }
+                                 }
+                             }
+                         )
+                 )
+         }
+     }
+ }
+
+
+ */
