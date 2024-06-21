@@ -51,7 +51,7 @@ struct DraggablePin: View {
             let frame = $0.frame(in: .global)
             
             Image(systemName: "dot.scope")
-                .font(.system(size: 100))
+                .font(.system(size: 50))
                 .fontWeight(.thin)
                 .foregroundStyle(.orange.gradient)
                 .animation(.snappy, body: { content in
@@ -66,7 +66,7 @@ struct DraggablePin: View {
                     }
                 }
         }
-        .frame(width: 120, height: 120)
+        .frame(width: 70, height: 70)
         .contentShape(.rect)
         .offset(translation)
         .gesture(
