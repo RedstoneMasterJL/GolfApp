@@ -32,3 +32,7 @@ struct HoleMapView: View {
         }.mapStyle(.hybrid(elevation: .realistic))
     }
 }
+
+#Preview {
+    HoleMapView(hole: .constant(holes[0]))
+}
