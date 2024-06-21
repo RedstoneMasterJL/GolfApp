@@ -30,6 +30,7 @@ struct HoleMapView: View {
                 Circle().fill(.yellow)
             }
         }.mapStyle(.hybrid(elevation: .realistic))
+            .mapControls { MapScaleView() }
     }
 }
 
