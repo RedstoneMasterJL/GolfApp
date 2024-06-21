@@ -130,3 +130,111 @@ final class MapSettings: ObservableObject {
     @Published var showElevation = 0
     @Published var showEmphasisStyle = 0
 }
+
+/*
+ https://stackoverflow.com/questions/77354568/swiftui-mapkit-drag-annotation
+//
+//  HoleMapView.swift
+//  GolfApp
+//
+//  Created by Jonathan Linder on 2024-06-19.
+//
+
+import SwiftUI
+import MapKit
+
+private let rectWidth: Double = 80
+
+private struct MarkerData {
+    let coordinate: CLLocationCoordinate2D
+    let screenPoint: CGPoint
+
+    var touchableRect: CGRect {
+        .init(x: screenPoint.x - rectWidth / 2, y: screenPoint.y - rectWidth / 2, width: rectWidth, height: rectWidth)
+    }
+}
+
+struct HoleMapView: View {
+
+    @State private var cameraPosition: MapCameraPosition = .automatic
+    @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch]
+    @State private var isMarkerDragging = false
+    @State private var markerData: MarkerData?
+
+    @Binding var hole: Hole
+
+    var body: some View {
+        GeometryReader { geometryProxy in
+            MapReader { mapProxy in
+                Map(position: Binding<MapCameraPosition>(get: {
+                    .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
+                }, set: { newValue in }), interactionModes: modes) {
+                    UserAnnotation()
+                    Annotation("", coordinate: hole.greenPos) {
+                        Circle().fill(.green)
+                    }
+                    if let markerData {
+                        Marker("Start", coordinate: markerData.coordinate)
+//                        Annotation("", coordinate: markerData.coordinate) {
+//                            Image(systemName: "scope").foregroundStyle(.blue)
+//                        }
+                    }
+                    Annotation("", coordinate: hole.teePos) {
+                        Circle().fill(.yellow)
+                    }
+                }.mapStyle(.hybrid(elevation: .realistic))
+                .onTapGesture { screenCoordinate in
+                    self.markerData = mapProxy.markerData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)
+                }
+                .highPriorityGesture(DragGesture(minimumDistance: 1)
+                    .onChanged { drag in
+                        guard let markerData else { return }
+                        if isMarkerDragging {
+
+                        } else if markerData.touchableRect.contains(drag.startLocation) {
+                            isMarkerDragging = true
+                            setMapInteraction(enabled: false)
+                        } else {
+                            return
+                        }
+
+                        self.markerData = mapProxy.markerData(screenCoordinate: drag.location, geometryProxy: geometryProxy)
+                    }
+                    .onEnded { drag in
+                        setMapInteraction(enabled: true)
+                        isMarkerDragging = false
+                    }
+                )
+                .onMapCameraChange {
+                    guard let markerData else { return }
+                    self.markerData = mapProxy.markerData(coordinate: markerData.coordinate, geometryProxy: geometryProxy)
+                }
+                .onAppear {
+                    self.markerData = mapProxy.markerData(coordinate: hole.centerPos, geometryProxy: geometryProxy)
+                }
+            }
+        }
+    }
+
+    private func setMapInteraction(enabled: Bool) {
+        if enabled {
+            modes = [.zoom, .pan, .pitch]
+        } else {
+            modes = []
+        }
+    }
+}
+
+private extension MapProxy {
+
+    func markerData(screenCoordinate: CGPoint, geometryProxy: GeometryProxy) -> MarkerData? {
+        guard let coordinate = convert(screenCoordinate, from: .local) else { return nil }
+        return .init(coordinate: coordinate, screenPoint: screenCoordinate)
+    }
+
+    func markerData(coordinate: CLLocationCoordinate2D, geometryProxy: GeometryProxy) -> MarkerData? {
+        guard let point = convert(coordinate, to: .local) else { return nil }
+        return .init(coordinate: coordinate, screenPoint: point)
+    }
+}
+*/
