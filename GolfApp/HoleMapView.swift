@@ -52,6 +52,7 @@ struct DraggablePin: View {
             
             Image(systemName: "dot.scope")
                 .font(.system(size: 100))
+                .fontWeight(.thin)
                 .foregroundStyle(.orange.gradient)
                 .animation(.snappy, body: { content in
                     content.scaleEffect(isActive ? 1.3 : 1)
@@ -65,7 +66,7 @@ struct DraggablePin: View {
                     }
                 }
         }
-        .frame(width: 200, height: 200)
+        .frame(width: 120, height: 120)
         .contentShape(.rect)
         .offset(translation)
         .gesture(
