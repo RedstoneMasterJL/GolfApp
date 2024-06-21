@@ -11,7 +11,7 @@ import MapKit
 struct HoleMapView: View {
     
     @Binding var hole: Hole
-    let modes: MapInteractionModes = [.zoom, .pan, .pitch]
+    let modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     
     @State var coordinate: CLLocationCoordinate2D?
     var body: some View {
