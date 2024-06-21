@@ -44,7 +44,7 @@ struct GolfAppApp: App {
                             }
                         }, label: {
                             Image(systemName: "arrow.left")
-                        }).buttonStyle(.borderedProminent)
+                        }).buttonStyle(.borderedProminent).disabled(currentHole == 1)
                         Spacer()
                         Button(action: {
                             withAnimation{
@@ -53,7 +53,7 @@ struct GolfAppApp: App {
                             }
                         }, label: {
                             Image(systemName: "arrow.right")
-                        }).buttonStyle(.borderedProminent)
+                        }).buttonStyle(.borderedProminent).disabled(currentHole == holes.count)
                     }.padding()//.background(.green)
                 }
                 .safeAreaInset(edge: .top) {
