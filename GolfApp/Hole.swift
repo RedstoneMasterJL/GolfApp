@@ -8,7 +8,11 @@
 import SwiftUI
 import MapKit
 
-struct Hole {
+struct Hole: Equatable {
+    static func == (lhs: Hole, rhs: Hole) -> Bool {
+        lhs.number == rhs.number
+    } // kanske farligt med number i framtiden
+    
     let number: Int
     let greenPos: CLLocationCoordinate2D
     let teePos: CLLocationCoordinate2D
