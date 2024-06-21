@@ -27,7 +27,9 @@ struct HoleMapView: View {
                 Annotation("", coordinate: hole.teePos) {
                     Circle().fill(.yellow)
                 }
-            }.mapStyle(.hybrid(elevation: .realistic))
+                MapPolyline(MKPolyline(points: [MKMapPoint(hole.teePos), MKMapPoint(coordinate ?? hole.centerPos), MKMapPoint(hole.greenPos)], count: 3))
+                    .stroke(.orange, lineWidth: 2)
+            }.mapStyle(.imagery(elevation: .realistic))
                 .mapControls { MapScaleView() }
                 .onChange(of: hole) { oldValue, newValue in
                     coordinate = hole.centerPos

@@ -38,7 +38,7 @@ struct DraggablePin: View {
         .contentShape(.rect)
         .offset(translation)
         .gesture(
-            LongPressGesture(minimumDuration: 0)
+            LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
                 .onEnded { isActive = $0 }
                 .simultaneously(with: DragGesture(minimumDistance: 0)
                     .onChanged { value in
