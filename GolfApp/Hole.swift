@@ -38,7 +38,13 @@ class Hole: Equatable {
         let scopeLoc = CLLocation(latitude: scopePos?.latitude ?? centerPos.latitude, longitude: scopePos?.longitude ?? centerPos.longitude)
         return teeLoc.distance(from: scopeLoc)
     }
-
+    
+    var scopeGreenDistance: Double {
+        let scopeLoc = CLLocation(latitude: scopePos?.latitude ?? centerPos.latitude, longitude: scopePos?.longitude ?? centerPos.longitude)
+        let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
+        return scopeLoc.distance(from: greenLoc)
+    }
+    
     var startCamPos: MapCameraPosition {
         get { .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5))) }
         set { }

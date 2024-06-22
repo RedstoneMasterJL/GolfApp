@@ -46,8 +46,6 @@ struct GolfAppApp: App {
                             Image(systemName: "arrow.left")
                         }).buttonStyle(.borderedProminent).disabled(currentHole == 1)
                         Spacer()
-                        Text(String(hole.teeScopeDistance))
-                        Spacer()
                         Button(action: {
                             withAnimation{
                                 currentHole += 1
@@ -73,6 +71,13 @@ struct GolfAppApp: App {
                             }
                         }
                         Spacer()
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6))
+                            HStack {
+                                Image(systemName: "arrow.circlepath")
+                                Text("\(hole.teeScopeDistance, specifier: "%.0f")")
+                            }
+                        }.frame(maxHeight: 60)
                     }.padding()
                 }
         }
