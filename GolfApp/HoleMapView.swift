@@ -11,6 +11,7 @@ import MapKit
 struct HoleMapView: View {
     
     @Binding var hole: Hole
+    
     let modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     // VARFÖR FUNKAR INTE MED COORDINATE I HOLE
     // TESTA MED KLAS OCH OBSERVABLE

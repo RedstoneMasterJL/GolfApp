@@ -8,7 +8,8 @@
 import SwiftUI
 import MapKit
 
-struct Hole: Equatable {
+@Observable
+class Hole: Equatable {
     static func == (lhs: Hole, rhs: Hole) -> Bool {
         lhs.number == rhs.number
     } // kanske farligt med number i framtiden
@@ -17,7 +18,7 @@ struct Hole: Equatable {
     let greenPos: CLLocationCoordinate2D
     let teePos: CLLocationCoordinate2D
     
-    @State var scopePos: CLLocationCoordinate2D? = nil
+    var scopePos: CLLocationCoordinate2D? = nil
     
     // Center of fairway
     var centerPos: CLLocationCoordinate2D {
@@ -40,6 +41,17 @@ struct Hole: Equatable {
     var startCamPos: MapCameraPosition {
         get { .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5))) }
         set { }
+    }
+    
+    func resetScopePos() {
+        scopePos = centerPos
+    }
+    
+    init(number: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D, scopePos: CLLocationCoordinate2D? = nil) {
+        self.number = number
+        self.greenPos = greenPos
+        self.teePos = teePos
+        self.scopePos = scopePos
     }
 }
 
