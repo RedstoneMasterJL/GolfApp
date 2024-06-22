@@ -39,7 +39,6 @@ struct GolfAppApp: App {
                     HStack {
                         Button(action: {
                             withAnimation {
-                                hole.resetScopePos()
                                 currentHole -= 1
                                 hole = holes[currentHole-1]
                             }
@@ -51,7 +50,6 @@ struct GolfAppApp: App {
                         Spacer()
                         Button(action: {
                             withAnimation{
-                                hole.resetScopePos()
                                 currentHole += 1
                                 hole = holes[currentHole-1]
                             }

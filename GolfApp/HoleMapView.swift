@@ -33,7 +33,7 @@ struct HoleMapView: View {
             }.mapStyle(.imagery(elevation: .realistic))
                 .mapControls { MapScaleView() }
                 .onChange(of: hole) { oldValue, newValue in
-                    hole.scopePos = hole.centerPos
+                    hole.resetScopePos()
                 }
         }
     }
