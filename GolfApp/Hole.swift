@@ -14,31 +14,26 @@ class Hole: Equatable {
         lhs.number == rhs.number
     } // kanske farligt med number i framtiden
     
+    // A hole has
     let number: Int
     let greenPos: CLLocationCoordinate2D
     let teePos: CLLocationCoordinate2D
     
+    // Marker and camera
     var scopePos: CLLocationCoordinate2D
     var camPos: MapCameraPosition
-    
-    // Center of fairway
-    let centerPos: CLLocationCoordinate2D
-    // Start camera
     let startCamPos: MapCameraPosition
+    let centerPos: CLLocationCoordinate2D
 
     // Distance tee - green
     let teeGreenDistance: Double
 
     var teeScopeDistance: Double {
-        let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
-        let scopeLoc = CLLocation(latitude: scopePos.latitude, longitude: scopePos.longitude)
-        return teeLoc.distance(from: scopeLoc)
+        distanceBetweenTwoPoints(point1: teePos, point2: scopePos)
     }
     
     var scopeGreenDistance: Double {
-        let scopeLoc = CLLocation(latitude: scopePos.latitude, longitude: scopePos.longitude)
-        let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
-        return scopeLoc.distance(from: greenLoc)
+        distanceBetweenTwoPoints(point1: scopePos, point2: greenPos)
     }
 
     func resetScopePos() {
@@ -78,7 +73,7 @@ class Hole: Equatable {
         self.greenPos = greenPos
         self.teePos = teePos
         let centerPos = GolfApp.centerPos(greenPos: greenPos, teePos: teePos)
-        let teeGreenDistance = GolfApp.teeGreenDistance(greenPos: greenPos, teePos: teePos)
+        let teeGreenDistance = GolfApp.distanceBetweenTwoPoints(point1: greenPos, point2: teePos)
         let startCamPos = GolfApp.startCamPos(centerPos: centerPos, teePos: teePos, teeGreenDistance: teeGreenDistance)
         self.scopePos = centerPos
         self.camPos = startCamPos
@@ -95,10 +90,10 @@ func centerPos(greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D)
     CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
 }
 
-func teeGreenDistance(greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) -> Double {
-    let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
-    let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
-    return greenLoc.distance(from: teeLoc)
+func distanceBetweenTwoPoints(point1: CLLocationCoordinate2D, point2: CLLocationCoordinate2D) -> Double {
+    let loc1 = CLLocation(latitude: point1.latitude, longitude: point1.longitude)
+    let loc2 = CLLocation(latitude: point2.latitude, longitude: point2.longitude)
+    return loc1.distance(from: loc2)
 }
 
 
