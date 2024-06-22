@@ -12,8 +12,8 @@ struct HoleMapView: View {
     
     @Binding var hole: Hole
     let modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
-    
-    @State var coordinate: CLLocationCoordinate2D?
+    // VARFÖR FUNKAR INTE MED COORDINATE I HOLE
+    // TESTA MED KLAS OCH OBSERVABLE
     var body: some View {
         MapReader { proxy in
             Map(position: $hole.startCamPos, interactionModes: modes) {
@@ -21,18 +21,18 @@ struct HoleMapView: View {
                 Annotation("", coordinate: hole.greenPos) {
                     Circle().fill(.green)
                 }
-                Annotation("", coordinate: coordinate ?? hole.centerPos) {
-                    DraggablePin(proxy: proxy, coordinate: $coordinate.withDefault(hole.centerPos))
+                Annotation("", coordinate: hole.scopePos ?? hole.centerPos) {
+                    DraggablePin(proxy: proxy, coordinate: $hole.scopePos.withDefault(hole.centerPos))
                 }
                 Annotation("", coordinate: hole.teePos) {
                     Circle().fill(.yellow)
                 }
-                MapPolyline(MKPolyline(points: [MKMapPoint(hole.teePos), MKMapPoint(coordinate ?? hole.centerPos), MKMapPoint(hole.greenPos)], count: 3))
+                MapPolyline(MKPolyline(points: [MKMapPoint(hole.teePos), MKMapPoint(hole.scopePos ?? hole.centerPos), MKMapPoint(hole.greenPos)], count: 3))
                     .stroke(.orange, lineWidth: 2)
             }.mapStyle(.imagery(elevation: .realistic))
                 .mapControls { MapScaleView() }
                 .onChange(of: hole) { oldValue, newValue in
-                    coordinate = hole.centerPos
+                    hole.scopePos = hole.centerPos
                 }
         }
     }

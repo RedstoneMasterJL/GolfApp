@@ -46,6 +46,8 @@ struct GolfAppApp: App {
                             Image(systemName: "arrow.left")
                         }).buttonStyle(.borderedProminent).disabled(currentHole == 1)
                         Spacer()
+                        Text(String(hole.teeScopeDistance))
+                        Spacer()
                         Button(action: {
                             withAnimation{
                                 currentHole += 1

@@ -17,6 +17,8 @@ struct Hole: Equatable {
     let greenPos: CLLocationCoordinate2D
     let teePos: CLLocationCoordinate2D
     
+    @State var scopePos: CLLocationCoordinate2D? = nil
+    
     // Center of fairway
     var centerPos: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
@@ -27,6 +29,12 @@ struct Hole: Equatable {
         let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
         let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
         return greenLoc.distance(from: teeLoc)
+    }
+
+    var teeScopeDistance: Double {
+        let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
+        let scopeLoc = CLLocation(latitude: scopePos?.latitude ?? centerPos.latitude, longitude: scopePos?.longitude ?? centerPos.longitude)
+        return teeLoc.distance(from: scopeLoc)
     }
 
     var startCamPos: MapCameraPosition {
