@@ -33,7 +33,6 @@ struct HoleMapView: View {
                 .mapControls { MapScaleView() }
                 .onChange(of: hole) { oldValue, newValue in
                     withAnimation { hole.resetHole() }
-                    print(hole.scopePos)
                 }
         }
     }

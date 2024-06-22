@@ -59,19 +59,35 @@ class Hole: Equatable {
     func resetHole() {
         resetScopePos()
         resetCamPos()
-        print("Resetted for number \(number)")
+        /*print("Resetted for number \(number)")
         print("New scopePos \(scopePos)")
         if scopePos?.longitude == centerPos.longitude {
             print("Scope pos is equal to centerpos")
         } else {
             print("Scope pos is NOT equal to centerpos")
-        }
+        }*/
+    }
+    var isDefault: Bool {
+        print("-----------------")
+        print("Hole number \(number)")
+        let centerScopeLatIsSame = centerPos.latitude == scopePos?.latitude
+        print("centerScopeLatIsSame \(centerScopeLatIsSame)")
+        print("Center lat: " + String(centerPos.latitude))
+        print("Scope lat: " + String(scopePos?.latitude ?? 0))
+        let centerScopeLongIsSame = centerPos.longitude == scopePos?.longitude
+        print("centerScopeLongIsSame \(centerScopeLongIsSame)")
+        let camPosStartCamPosIsSame = camPos == startCamPos
+        print("camPosStartCamPosIsSame \(camPosStartCamPosIsSame)")
+        print("-----------------")
+        return centerScopeLatIsSame && centerScopeLongIsSame && camPosStartCamPosIsSame
     }
     
     init(number: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
         self.number = number
         self.greenPos = greenPos
         self.teePos = teePos
+        self.scopePos = centerPos
+        self.camPos = startCamPos
     }
 }
 

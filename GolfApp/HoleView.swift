@@ -59,7 +59,7 @@ struct HoleView: View {
                             withAnimation { hole.resetHole() }
                         } label: {
                             Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
-                        }
+                        }.disabled(hole.isDefault)
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {
