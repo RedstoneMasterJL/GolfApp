@@ -16,18 +16,18 @@ struct HoleMapView: View {
 
     var body: some View {
         MapReader { proxy in
-            Map(position: $hole.camPos.withDefault(hole.startCamPos), interactionModes: modes) {
+            Map(position: $hole.camPos, interactionModes: modes) {
                 UserAnnotation()
                 Annotation("", coordinate: hole.greenPos) {
                     Circle().fill(.green)
                 }
-                Annotation("", coordinate: hole.scopePos ?? hole.centerPos) {
-                    DraggablePin(proxy: proxy, coordinate: $hole.scopePos.withDefault(hole.centerPos))
+                Annotation("", coordinate: hole.scopePos) {
+                    DraggablePin(proxy: proxy, coordinate: $hole.scopePos)
                 }
                 Annotation("", coordinate: hole.teePos) {
                     Circle().fill(.yellow)
                 }
-                MapPolyline(coordinates: [hole.teePos, hole.scopePos ?? hole.centerPos, hole.greenPos], contourStyle: .straight)
+                MapPolyline(coordinates: [hole.teePos, hole.scopePos, hole.greenPos], contourStyle: .straight)
                     .stroke(.orange, lineWidth: 3)
             }.mapStyle(.imagery(elevation: .realistic))
                 .mapControls { MapScaleView() }

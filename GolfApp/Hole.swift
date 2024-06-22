@@ -18,38 +18,29 @@ class Hole: Equatable {
     let greenPos: CLLocationCoordinate2D
     let teePos: CLLocationCoordinate2D
     
-    var scopePos: CLLocationCoordinate2D? = nil
-    var camPos: MapCameraPosition? = nil
+    var scopePos: CLLocationCoordinate2D
+    var camPos: MapCameraPosition
     
     // Center of fairway
-    var centerPos: CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
-    }
-    
+    let centerPos: CLLocationCoordinate2D
+    // Start camera
+    let startCamPos: MapCameraPosition
+
     // Distance tee - green
-    var teeGreenDistance: Double {
-        let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
-        let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
-        return greenLoc.distance(from: teeLoc)
-    }
+    let teeGreenDistance: Double
 
     var teeScopeDistance: Double {
         let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
-        let scopeLoc = CLLocation(latitude: scopePos?.latitude ?? centerPos.latitude, longitude: scopePos?.longitude ?? centerPos.longitude)
+        let scopeLoc = CLLocation(latitude: scopePos.latitude, longitude: scopePos.longitude)
         return teeLoc.distance(from: scopeLoc)
     }
     
     var scopeGreenDistance: Double {
-        let scopeLoc = CLLocation(latitude: scopePos?.latitude ?? centerPos.latitude, longitude: scopePos?.longitude ?? centerPos.longitude)
+        let scopeLoc = CLLocation(latitude: scopePos.latitude, longitude: scopePos.longitude)
         let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
         return scopeLoc.distance(from: greenLoc)
     }
-    
-    var startCamPos: MapCameraPosition {
-        get { .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5))) }
-        set { }
-    }
-    
+
     func resetScopePos() {
         scopePos = centerPos
     }
@@ -70,11 +61,11 @@ class Hole: Equatable {
     var isDefault: Bool {
         print("-----------------")
         print("Hole number \(number)")
-        let centerScopeLatIsSame = centerPos.latitude == scopePos?.latitude
+        let centerScopeLatIsSame = centerPos.latitude == scopePos.latitude
         print("centerScopeLatIsSame \(centerScopeLatIsSame)")
         print("Center lat: " + String(centerPos.latitude))
-        print("Scope lat: " + String(scopePos?.latitude ?? 0))
-        let centerScopeLongIsSame = centerPos.longitude == scopePos?.longitude
+        print("Scope lat: " + String(scopePos.latitude))
+        let centerScopeLongIsSame = centerPos.longitude == scopePos.longitude
         print("centerScopeLongIsSame \(centerScopeLongIsSame)")
         let camPosStartCamPosIsSame = camPos == startCamPos
         print("camPosStartCamPosIsSame \(camPosStartCamPosIsSame)")
@@ -86,10 +77,30 @@ class Hole: Equatable {
         self.number = number
         self.greenPos = greenPos
         self.teePos = teePos
+        let centerPos = GolfApp.centerPos(greenPos: greenPos, teePos: teePos)
+        let teeGreenDistance = GolfApp.teeGreenDistance(greenPos: greenPos, teePos: teePos)
+        let startCamPos = GolfApp.startCamPos(centerPos: centerPos, teePos: teePos, teeGreenDistance: teeGreenDistance)
         self.scopePos = centerPos
         self.camPos = startCamPos
+        self.startCamPos = startCamPos
+        self.centerPos = centerPos
+        self.teeGreenDistance = teeGreenDistance
     }
 }
+
+func startCamPos(centerPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D, teeGreenDistance: Double) -> MapCameraPosition {
+    .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))
+}
+func centerPos(greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) -> CLLocationCoordinate2D {
+    CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
+}
+
+func teeGreenDistance(greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) -> Double {
+    let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
+    let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
+    return greenLoc.distance(from: teeLoc)
+}
+
 
 let holes = [
 

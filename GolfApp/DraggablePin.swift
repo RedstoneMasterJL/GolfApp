@@ -26,7 +26,7 @@ struct DraggablePin: View {
                     content.scaleEffect(isActive ? 1.3 : 1)
                 })
                 .frame(width: frame.width, height: frame.height)
-                .onChange(of: translation) { oldValue, newValue in
+                .onChange(of: isActive) { oldValue, newValue in
                     let position = CGPoint(x: frame.midX, y: frame.midY)
                     if let coordinate = proxy.convert(position, from: .global) {
                         self.coordinate = coordinate
