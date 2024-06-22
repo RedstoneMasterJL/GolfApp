@@ -21,49 +21,61 @@ struct HoleView: View {
         HoleMapView(hole: $hole)
             .safeAreaInset(edge: .bottom) {
                 HStack {
-                    Button(action: {
-                        withAnimation {
-                            currentHole -= 1
-                            hole = holes[currentHole-1]
-                        }
-                    }, label: {
-                        Image(systemName: "arrow.left")
-                    }).buttonStyle(.borderedProminent).disabled(currentHole == 1)
+                    ZStack {
+                        rectangle
+                        Button {
+                            withAnimation {
+                                currentHole -= 1
+                                hole = holes[currentHole-1]
+                            }
+                        } label: {
+                            Image(systemName: "arrow.left").font(.title).frame(width: 50, height: 50)
+                        }.disabled(currentHole == holes.count)
+                    }.frame(maxWidth: 60)
                     Spacer()
-                    Button(action: {
-                        withAnimation{
-                            currentHole += 1
-                            hole = holes[currentHole-1]
-                        }
-                    }, label: {
-                        Image(systemName: "arrow.right")
-                    }).buttonStyle(.borderedProminent).disabled(currentHole == holes.count)
-                }.padding()//.background(.green)
+                    ZStack {
+                        rectangle
+                        Button {
+                            withAnimation {
+                                currentHole += 1
+                                hole = holes[currentHole-1]
+                            }
+                        } label: {
+                            Image(systemName: "arrow.right").font(.title).frame(width: 50, height: 50)
+                        }.disabled(currentHole == holes.count)
+                    }.frame(maxWidth: 60)
+                    
+                }.frame(maxHeight: 60).padding()
             }
             .safeAreaInset(edge: .top) {
                 HStack {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6)).frame(width: 60, height: 60)
+                        rectangle
                         Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
-                    }
+                    }.frame(maxWidth: 60)
                     ZStack {
-                        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6)).frame(width: 60, height: 60)
+                        rectangle
                         Button {
                             withAnimation { hole.resetHole() }
                         } label: {
                             Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
                         }
-                    }
+                    }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {
-                        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6))
+                        rectangle
                         VStack {
-                            Text("To scope")
-                            Text("\(hole.teeScopeDistance, specifier: "%.0f")")
+                            Text("To scope").font(.footnote)
+                            Text("\(hole.teeScopeDistance, specifier: "%.0f")").font(.title)
                         }
-                    }.frame(maxHeight: 60)
-                }.padding()
+                    }.frame(maxWidth: 100)
+                }.frame(maxHeight: 60).padding()
             }
+    }
+    
+    private var rectangle: some View {
+        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6))
+
     }
 }
 
