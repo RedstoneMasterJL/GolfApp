@@ -17,7 +17,7 @@ struct HoleMapView: View {
     // TESTA MED KLAS OCH OBSERVABLE
     var body: some View {
         MapReader { proxy in
-            Map(position: $hole.startCamPos, interactionModes: modes) {
+            Map(position: $hole.camPos.withDefault(hole.startCamPos), interactionModes: modes) {
                 UserAnnotation()
                 Annotation("", coordinate: hole.greenPos) {
                     Circle().fill(.green)
@@ -33,7 +33,8 @@ struct HoleMapView: View {
             }.mapStyle(.imagery(elevation: .realistic))
                 .mapControls { MapScaleView() }
                 .onChange(of: hole) { oldValue, newValue in
-                    hole.resetScopePos()
+                    withAnimation { hole.resetHole() }
+                    print(hole.scopePos)
                 }
         }
     }

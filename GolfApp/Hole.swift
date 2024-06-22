@@ -19,6 +19,7 @@ class Hole: Equatable {
     let teePos: CLLocationCoordinate2D
     
     var scopePos: CLLocationCoordinate2D? = nil
+    var camPos: MapCameraPosition? = nil
     
     // Center of fairway
     var centerPos: CLLocationCoordinate2D {
@@ -46,12 +47,25 @@ class Hole: Equatable {
     func resetScopePos() {
         scopePos = centerPos
     }
+    func resetCamPos() {
+        camPos = startCamPos
+    }
+    func resetHole() {
+        resetScopePos()
+        resetCamPos()
+        print("Resetted for number \(number)")
+        print("New scopePos \(scopePos)")
+        if scopePos?.longitude == centerPos.longitude {
+            print("Scope pos is equal to centerpos")
+        } else {
+            print("Scope pos is NOT equal to centerpos")
+        }
+    }
     
-    init(number: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D, scopePos: CLLocationCoordinate2D? = nil) {
+    init(number: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
         self.number = number
         self.greenPos = greenPos
         self.teePos = teePos
-        self.scopePos = scopePos
     }
 }
 

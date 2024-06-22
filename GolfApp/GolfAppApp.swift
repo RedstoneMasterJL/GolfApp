@@ -64,9 +64,16 @@ struct GolfAppApp: App {
                             RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6)).frame(width: 60, height: 60)
                             Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
                         }
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6)).frame(width: 60, height: 60)
+                            Button {
+                                withAnimation { hole.resetHole() }
+                            } label: {
+                                Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
+                            }
+                        }
                         Spacer()
                     }.padding()
-                    
                 }
         }
         .modelContainer(sharedModelContainer)
