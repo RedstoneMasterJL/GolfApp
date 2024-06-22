@@ -45,13 +45,6 @@ class Hole: Equatable {
     func resetHole() {
         resetScopePos()
         resetCamPos()
-        /*print("Resetted for number \(number)")
-        print("New scopePos \(scopePos)")
-        if scopePos?.longitude == centerPos.longitude {
-            print("Scope pos is equal to centerpos")
-        } else {
-            print("Scope pos is NOT equal to centerpos")
-        }*/
     }
     var isDefault: Bool {
         print("-----------------")
@@ -64,7 +57,6 @@ class Hole: Equatable {
         print("centerScopeLongIsSame \(centerScopeLongIsSame)")
         let camPosStartCamPosIsSame = camPos == startCamPos
         print("camPosStartCamPosIsSame \(camPosStartCamPosIsSame)")
-        print("-----------------")
         return centerScopeLatIsSame && centerScopeLongIsSame && camPosStartCamPosIsSame
     }
     
