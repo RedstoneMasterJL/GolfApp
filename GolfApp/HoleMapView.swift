@@ -28,8 +28,8 @@ struct HoleMapView: View {
                 Annotation("", coordinate: hole.teePos) {
                     Circle().fill(.yellow)
                 }
-                MapPolyline(MKPolyline(points: [MKMapPoint(hole.teePos), MKMapPoint(hole.scopePos ?? hole.centerPos), MKMapPoint(hole.greenPos)], count: 3))
-                    .stroke(.orange, lineWidth: 2)
+                MapPolyline(coordinates: [hole.teePos, hole.scopePos ?? hole.centerPos, hole.greenPos], contourStyle: .straight)
+                    .stroke(.orange, lineWidth: 3)
             }.mapStyle(.imagery(elevation: .realistic))
                 .mapControls { MapScaleView() }
                 .onChange(of: hole) { oldValue, newValue in
