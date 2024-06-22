@@ -30,7 +30,7 @@ struct HoleView: View {
                             }
                         } label: {
                             Image(systemName: "arrow.left").font(.title).frame(width: 50, height: 50)
-                        }.disabled(currentHole == holes.count)
+                        }.disabled(currentHole == 1)
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {
@@ -73,8 +73,10 @@ struct HoleView: View {
             }
     }
     
+    @Environment(\.colorScheme) var clrScheme
+    
     private var rectangle: some View {
-        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(.white.opacity(0.6))
+        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(clrScheme == .dark ? .black.opacity(0.6) : .white.opacity(0.6))
 
     }
 }
