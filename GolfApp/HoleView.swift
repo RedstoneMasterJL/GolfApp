@@ -13,12 +13,17 @@ struct HoleView: View {
     
     @State var hole: Hole
     
-    init() {
+    let holes: [Hole] // Hole array
+    
+    init(holes: [Hole]) {
         self.hole = holes[0] // First hole
+        self.holes = holes
     }
     
+    @State var markerData: MarkerData?
+    
     var body: some View {
-        HoleMapView(hole: $hole)
+        HoleMapView(hole: $hole, markerData: $markerData)
             .safeAreaInset(edge: .bottom) {
                 HStack {
                     ZStack {
@@ -66,7 +71,7 @@ struct HoleView: View {
                         rectangle
                         VStack {
                             Text("To scope").font(.footnote)
-                            Text("\(hole.teeScopeDistance, specifier: "%.0f")").font(.title)
+                            Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: markerData?.coordinate ?? hole.centerPos), specifier: "%.0f")").font(.title)
                         }
                     }.frame(maxWidth: 100)
                 }.frame(maxHeight: 60).padding()
@@ -82,5 +87,5 @@ struct HoleView: View {
 }
 
 #Preview {
-    HoleView()
+    HoleView(holes: albatross18holes)
 }

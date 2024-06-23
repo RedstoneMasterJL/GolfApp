@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7600103D2C282F3C00E20CE8 /* MarkerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7600103C2C282F3C00E20CE8 /* MarkerData.swift */; };
 		76BB08012C23288300A5C559 /* GolfAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08002C23288300A5C559 /* GolfAppApp.swift */; };
 		76BB08032C23288300A5C559 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08022C23288300A5C559 /* ContentView.swift */; };
 		76BB08052C23288300A5C559 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08042C23288300A5C559 /* Item.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7600103C2C282F3C00E20CE8 /* MarkerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerData.swift; sourceTree = "<group>"; };
 		76BB07FD2C23288300A5C559 /* GolfApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GolfApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76BB08002C23288300A5C559 /* GolfAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GolfAppApp.swift; sourceTree = "<group>"; };
 		76BB08022C23288300A5C559 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 				76BB08022C23288300A5C559 /* ContentView.swift */,
 				76BB081F2C26F36C00A5C559 /* HoleView.swift */,
 				76BB08132C234A3400A5C559 /* HoleMapView.swift */,
+				7600103C2C282F3C00E20CE8 /* MarkerData.swift */,
 				76BB081D2C26085600A5C559 /* DraggablePin.swift */,
 				76BB08192C25FE6400A5C559 /* Binding+.swift */,
 				76BB08172C2494C600A5C559 /* Hole.swift */,
@@ -161,6 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				76BB08182C2494C600A5C559 /* Hole.swift in Sources */,
+				7600103D2C282F3C00E20CE8 /* MarkerData.swift in Sources */,
 				76BB08162C235BEE00A5C559 /* TestView.swift in Sources */,
 				76BB08032C23288300A5C559 /* ContentView.swift in Sources */,
 				76BB08052C23288300A5C559 /* Item.swift in Sources */,

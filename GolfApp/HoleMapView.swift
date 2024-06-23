@@ -14,7 +14,7 @@ struct HoleMapView: View {
     
     @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     @State private var isMarkerDragging = false
-    @State private var markerData: MarkerData?
+    @Binding var markerData: MarkerData?
     
     var body: some View {
         GeometryReader { geometryProxy in
@@ -82,28 +82,5 @@ struct HoleMapView: View {
 }
 
 #Preview {
-    HoleMapView(hole: .constant(holes[0]))
-}
-
-private let rectWidth: Double = 80
-
-private struct MarkerData {
-    let coordinate: CLLocationCoordinate2D
-    let screenPoint: CGPoint
-    
-    var touchableRect: CGRect {
-        .init(x: screenPoint.x - rectWidth / 2, y: screenPoint.y - rectWidth / 2, width: rectWidth, height: rectWidth)
-    }
-}
-private extension MapProxy {
-    
-    func markerData(screenCoordinate: CGPoint, geometryProxy: GeometryProxy) -> MarkerData? {
-        guard let coordinate = convert(screenCoordinate, from: .local) else { return nil }
-        return .init(coordinate: coordinate, screenPoint: screenCoordinate)
-    }
-    
-    func markerData(coordinate: CLLocationCoordinate2D, geometryProxy: GeometryProxy) -> MarkerData? {
-        guard let point = convert(coordinate, to: .local) else { return nil }
-        return .init(coordinate: coordinate, screenPoint: point)
-    }
+    HoleView(holes: albatross18holes)
 }

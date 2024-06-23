@@ -89,7 +89,7 @@ func distanceBetweenTwoPoints(point1: CLLocationCoordinate2D, point2: CLLocation
 }
 
 
-let holes = [
+let albatross18holes = [
 
     Hole(number: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775), teePos: CLLocationCoordinate2D(latitude: 57.78032, longitude: 11.95332)),
     Hole(number: 2, greenPos: CLLocationCoordinate2D(latitude: 57.78239, longitude: 11.94944), teePos: CLLocationCoordinate2D(latitude: 57.78216, longitude: 11.94756)),
