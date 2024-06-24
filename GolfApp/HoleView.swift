@@ -70,8 +70,13 @@ struct HoleView: View {
                     ZStack {
                         rectangle
                         VStack {
-                            Text("To scope").font(.footnote)
-                            Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: markerData?.coordinate ?? hole.centerPos), specifier: "%.0f")").font(.title)
+                            if let markerData = markerData {
+                                Text("To scope").font(.footnote)
+                                Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: markerData.coordinate), specifier: "%.0f")").font(.title)
+                            } else {
+                                Text("Place scope")
+                                Text("---").font(.title)
+                            }
                         }
                     }.frame(maxWidth: 100)
                 }.frame(maxHeight: 60).padding()
