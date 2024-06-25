@@ -15,12 +15,13 @@ struct DragHolesView: View {
     
     @State var markers: [HoleData]
     
-    @State var currentHole = 1
+    @State private var currentHole: Int
 
-    init() {
-        markers = [
+    init(_ markers: [HoleData]? = nil) {
+        self.markers = markers ?? [
             HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
         ]
+        currentHole = markers?.count ?? 1
     }
     
     var body: some View {

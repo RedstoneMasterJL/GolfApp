@@ -26,8 +26,8 @@ struct GolfAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            //DragHolesView()
-            HoleView(holes: albatross18holes)
+            DragHolesView(albatross18holes)
+            //HoleView(holes: albatross18holes)
         }
         .modelContainer(sharedModelContainer)
     }
