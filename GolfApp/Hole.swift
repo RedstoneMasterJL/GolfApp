@@ -9,52 +9,63 @@ import SwiftUI
 import MapKit
 import SwiftData
 
-extension CLLocationCoordinate2D: Codable {
-    public enum CodingKeys: String, CodingKey {
-        case latitude
-        case longitude
-    }
+//extension CLLocationCoordinate2D: Codable {
+//    public enum CodingKeys: String, CodingKey {
+//        case latitude
+//        case longitude
+//    }
+//
+//    public func encode(to encoder: Encoder) throws {
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//        try container.encode(latitude, forKey: .latitude)
+//        try container.encode(longitude, forKey: .longitude)
+//        }
+//
+//    public init(from decoder: Decoder) throws {
+//        let values = try decoder.container(keyedBy: CodingKeys.self)
+//        latitude = try values.decode(Double.self, forKey: .latitude)
+//        longitude = try values.decode(Double.self, forKey: .longitude)
+//    }
+//}
 
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(latitude, forKey: .latitude)
-        try container.encode(longitude, forKey: .longitude)
-        }
-
-    public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        latitude = try values.decode(Double.self, forKey: .latitude)
-        longitude = try values.decode(Double.self, forKey: .longitude)
-    }
-}
+//@Model
+//class Coordinate2D {
+//    var latitude: Double
+//    var longitude: Double
+//    init(latitude: Double, longitude: Double) {
+//        self.latitude = latitude
+//        self.longitude = longitude
+//    }
+//    var location: CLLocationCoordinate2D {
+//        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+//    }
+//}
 
 @Model
 class HoleData {
 
     let num: Int
-    var greenPos: CLLocationCoordinate2D
-    var teePos: CLLocationCoordinate2D
-    
-   
-    // Camera
-    var camPos: MapCameraPosition
-    
-    func resetCamPos() {
-        camPos = startCamPos
+    var greenPos: CLLocationCoordinate2D {
+        get { CLLocationCoordinate2D(latitude: greenLat, longitude: greenLong) }
+        set { greenLat = newValue.latitude; greenLong = newValue.longitude }
     }
-    var camPosIsDefault: Bool {
-        camPos == startCamPos
+    var teePos: CLLocationCoordinate2D {
+        get { CLLocationCoordinate2D(latitude: teeLat, longitude: teeLong) }
+        set { teeLat = newValue.latitude; teeLong = newValue.longitude }
     }
     
+    private var greenLat: Double
+    private var greenLong: Double
+    private var teeLat: Double
+    private var teeLong: Double
+
+           
     init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
         self.num = num
-        self.greenPos = greenPos
-        self.teePos = teePos
-        self.camPos = GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
-    }
-    
-    private var startCamPos: MapCameraPosition {
-        GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
+        self.greenLat = greenPos.latitude
+        self.greenLong = greenPos.longitude
+        self.teeLat = teePos.latitude
+        self.teeLong = teePos.longitude
     }
 }
 
@@ -70,7 +81,12 @@ func distanceBetweenTwoPoints(point1: CLLocationCoordinate2D, point2: CLLocation
     let loc2 = CLLocation(latitude: point2.latitude, longitude: point2.longitude)
     return loc1.distance(from: loc2)
 }
-
+func resetCamPos(_ camPos: inout MapCameraPosition, to defaultCamPos: MapCameraPosition) {
+    camPos = defaultCamPos
+}
+func camPosIsDefault(_ camPos: MapCameraPosition, with defaultCamPos: MapCameraPosition) -> Bool {
+    camPos == defaultCamPos
+}
 
 let albatross18holes = [
 

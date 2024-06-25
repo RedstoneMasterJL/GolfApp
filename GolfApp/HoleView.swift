@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct HoleView: View {
     
@@ -15,15 +16,20 @@ struct HoleView: View {
     
     let holes: [HoleData] // Hole array
     
+    @State var camPos: MapCameraPosition
+
     init(holes: [HoleData]) {
         self.hole = holes[0] // First hole
         self.holes = holes
+        
+        self.camPos = startCamPos(centerPos: centerPos(greenPos: holes[0].greenPos, teePos: holes[0].teePos), teePos: holes[0].teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: holes[0].teePos, point2: holes[0].greenPos))
     }
     
     @State var scopeData: ScopeData?
     
+    
     var body: some View {
-        HoleMapView(hole: $hole, scopeData: $scopeData)
+        HoleMapView(hole: $hole, scopeData: $scopeData, camPos: $camPos)
             .safeAreaInset(edge: .bottom) {
                 HStack {
                     ZStack {
@@ -61,18 +67,20 @@ struct HoleView: View {
                     ZStack {
                         OpacityRectangle()
                         Button {
-                            withAnimation { hole.resetCamPos() }
+                            withAnimation {
+                                resetCamPos(&camPos, to: startCamPos(centerPos: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), teePos: hole.teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: hole.teePos, point2: hole.greenPos)))
+                            }
                         } label: {
                             Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
-                        }.disabled(hole.camPosIsDefault)
+                        }.disabled(camPosIsDefault(camPos, with: startCamPos(centerPos: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), teePos: hole.teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: hole.teePos, point2: hole.greenPos))))
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {
                         OpacityRectangle()
                         VStack {
-                            if let markerData = scopeData {
+                            if let scopeData = scopeData {
                                 Text("To scope").font(.footnote)
-                                Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: markerData.coordinate), specifier: "%.0f")").font(.title)
+                                Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: scopeData.coordinate), specifier: "%.0f")").font(.title)
                             } else {
                                 Text("Place scope")
                                 Text("---").font(.title)
