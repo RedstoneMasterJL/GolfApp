@@ -16,7 +16,6 @@ struct HoleMapView: View {
     @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     @State private var isMarkerDragging = false
     @Binding var scopeData: ScopeData?
-    @Binding var camPos: MapCameraPosition
 
     var body: some View {
         GeometryReader { geometryProxy in
