@@ -13,13 +13,13 @@ struct DragHolesView: View {
     @State private var position: MapCameraPosition = .automatic
     @State private var modes: MapInteractionModes = [.pan, .rotate, .zoom] // Ingen pitching, ser konstigt ut med polylinen då
     
-    @State var markers: [HoleMarkerData]
+    @State var markers: [HoleData]
     
     @State var currentHole = 1
 
     init() {
         markers = [
-            HoleMarkerData(holeNum: 1, greenMarkerPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teeMarkerPos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
+            HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
         ]
     }
     
@@ -27,13 +27,13 @@ struct DragHolesView: View {
         MapReader { proxy in
             Map(position: $position, interactionModes: modes) {
                 ForEach(0..<markers.count, id: \.self) { i in
-                    Annotation(String(markers[i].holeNum), coordinate: markers[i].greenMarkerPos) {
-                        MarkerView(proxy: proxy, type: .green, coordinate: $markers[i].greenMarkerPos)
+                    Annotation(String(markers[i].num), coordinate: markers[i].greenPos) {
+                        MarkerView(proxy: proxy, type: .green, coordinate: $markers[i].greenPos)
                     }
-                    Annotation(String(markers[i].holeNum), coordinate: markers[i].teeMarkerPos) {
-                        MarkerView(proxy: proxy, type: .tee, coordinate: $markers[i].teeMarkerPos)
+                    Annotation(String(markers[i].num), coordinate: markers[i].teePos) {
+                        MarkerView(proxy: proxy, type: .tee, coordinate: $markers[i].teePos)
                     }
-                    MapPolyline(coordinates: [markers[i].greenMarkerPos, markers[i].teeMarkerPos])
+                    MapPolyline(coordinates: [markers[i].greenPos, markers[i].teePos])
                         .stroke(.orange, lineWidth: 2)
                 }
                 
@@ -45,7 +45,7 @@ struct DragHolesView: View {
                         Divider().frame(maxHeight: 15)
                         Text("Nuvarande hål \(currentHole)")
                         Button("+") {
-                            let newHoleMarker = HoleMarkerData(holeNum: currentHole + 1, greenMarkerPos: markers[currentHole-1].greenMarkerPos, teeMarkerPos: markers[currentHole-1].greenMarkerPos)
+                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
                             markers.append(newHoleMarker)
                             currentHole += 1
                         }.disabled(markers.count == 18)
@@ -73,15 +73,15 @@ enum MarkerType {
 }
 
 @Observable
-class HoleMarkerData: Identifiable {
-    let holeNum: Int
-    var greenMarkerPos: CLLocationCoordinate2D
-    var teeMarkerPos: CLLocationCoordinate2D
+class HoleData: Identifiable {
+    let num: Int
+    var greenPos: CLLocationCoordinate2D
+    var teePos: CLLocationCoordinate2D
     
-    init(holeNum: Int, greenMarkerPos: CLLocationCoordinate2D, teeMarkerPos: CLLocationCoordinate2D) {
-        self.holeNum = holeNum
-        self.greenMarkerPos = greenMarkerPos
-        self.teeMarkerPos = teeMarkerPos
+    init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
+        self.num = num
+        self.greenPos = greenPos
+        self.teePos = teePos
     }
 }
 
