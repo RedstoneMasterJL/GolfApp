@@ -9,63 +9,39 @@ import SwiftUI
 import MapKit
 import SwiftData
 
-//extension CLLocationCoordinate2D: Codable {
-//    public enum CodingKeys: String, CodingKey {
-//        case latitude
-//        case longitude
-//    }
-//
-//    public func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//        try container.encode(latitude, forKey: .latitude)
-//        try container.encode(longitude, forKey: .longitude)
-//        }
-//
-//    public init(from decoder: Decoder) throws {
-//        let values = try decoder.container(keyedBy: CodingKeys.self)
-//        latitude = try values.decode(Double.self, forKey: .latitude)
-//        longitude = try values.decode(Double.self, forKey: .longitude)
-//    }
-//}
-
-//@Model
-//class Coordinate2D {
-//    var latitude: Double
-//    var longitude: Double
-//    init(latitude: Double, longitude: Double) {
-//        self.latitude = latitude
-//        self.longitude = longitude
-//    }
-//    var location: CLLocationCoordinate2D {
-//        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-//    }
-//}
+extension CLLocationCoordinate2D: Codable {
+    enum CodingKeys: String, CodingKey {
+        case latitude
+        case longitude
+    }
+    
+    // Initialize from decoder
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let latitude = try container.decode(CLLocationDegrees.self, forKey: .latitude)
+        let longitude = try container.decode(CLLocationDegrees.self, forKey: .longitude)
+        self.init(latitude: latitude, longitude: longitude)
+    }
+    
+    // Encode to encoder
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(latitude, forKey: .latitude)
+        try container.encode(longitude, forKey: .longitude)
+    }
+}
 
 @Model
 class HoleData {
 
     let num: Int
-    var greenPos: CLLocationCoordinate2D {
-        get { CLLocationCoordinate2D(latitude: greenLat, longitude: greenLong) }
-        set { greenLat = newValue.latitude; greenLong = newValue.longitude }
-    }
-    var teePos: CLLocationCoordinate2D {
-        get { CLLocationCoordinate2D(latitude: teeLat, longitude: teeLong) }
-        set { teeLat = newValue.latitude; teeLong = newValue.longitude }
-    }
+    var greenPos: CLLocationCoordinate2D
+    var teePos: CLLocationCoordinate2D
     
-    private var greenLat: Double
-    private var greenLong: Double
-    private var teeLat: Double
-    private var teeLong: Double
-
-           
     init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
         self.num = num
-        self.greenLat = greenPos.latitude
-        self.greenLong = greenPos.longitude
-        self.teeLat = teePos.latitude
-        self.teeLong = teePos.longitude
+        self.greenPos = greenPos
+        self.teePos = teePos
     }
 }
 
