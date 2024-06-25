@@ -14,7 +14,7 @@ struct HoleMapView: View {
     
     @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     @State private var isMarkerDragging = false
-    @Binding var markerData: MarkerData?
+    @Binding var scopeData: ScopeData?
     
     var body: some View {
         GeometryReader { geometryProxy in
@@ -24,8 +24,8 @@ struct HoleMapView: View {
                     Annotation("", coordinate: hole.greenPos) {
                         Circle().fill(.green)
                     }
-                    if let markerData {
-                        Annotation("", coordinate: markerData.coordinate) {
+                    if let scopeData {
+                        Annotation("", coordinate: scopeData.coordinate) {
                             Image(systemName: "dot.scope")
                                 .font(.system(size: 50))
                                 .fontWeight(.thin)
@@ -36,29 +36,29 @@ struct HoleMapView: View {
                     Annotation("", coordinate: hole.teePos) {
                         Circle().fill(.yellow)
                     }
-                    MapPolyline(coordinates: [hole.teePos, markerData?.coordinate ?? hole.centerPos, hole.greenPos], contourStyle: .straight)
+                    MapPolyline(coordinates: [hole.teePos, scopeData?.coordinate ?? hole.centerPos, hole.greenPos], contourStyle: .straight)
                         .stroke(.orange, lineWidth: 3)
                 }.mapStyle(.imagery(elevation: .realistic))
                     .mapControls { MapScaleView() }
                     .onChange(of: hole, initial: true) { oldValue, newValue in
-                        withAnimation { hole.resetHole(); self.markerData = mapProxy.markerData(coordinate: hole.centerPos, geometryProxy: geometryProxy) }
+                        withAnimation { hole.resetHole(); self.scopeData = mapProxy.scopeData(coordinate: hole.centerPos, geometryProxy: geometryProxy) }
                     }
                     .onTapGesture { screenCoordinate in
-                        self.markerData = mapProxy.markerData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)
+                        self.scopeData = mapProxy.scopeData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)
                     }
                     .highPriorityGesture(DragGesture(minimumDistance: 1)
                         .onChanged { drag in
-                            guard let markerData else { return }
+                            guard let scopeData else { return }
                             if isMarkerDragging {
                                 
-                            } else if markerData.touchableRect.contains(drag.startLocation) {
+                            } else if scopeData.touchableRect.contains(drag.startLocation) {
                                 isMarkerDragging = true
                                 setMapInteraction(enabled: false)
                             } else {
                                 return
                             }
                             
-                            self.markerData = mapProxy.markerData(screenCoordinate: drag.location, geometryProxy: geometryProxy)
+                            self.scopeData = mapProxy.scopeData(screenCoordinate: drag.location, geometryProxy: geometryProxy)
                         }
                         .onEnded { drag in
                             setMapInteraction(enabled: true)
@@ -66,8 +66,8 @@ struct HoleMapView: View {
                         }
                     )
                     .onMapCameraChange {
-                        guard let markerData else { return }
-                        self.markerData = mapProxy.markerData(coordinate: markerData.coordinate, geometryProxy: geometryProxy)
+                        guard let scopeData else { return }
+                        self.scopeData = mapProxy.scopeData(coordinate: scopeData.coordinate, geometryProxy: geometryProxy)
                     }
             }
         }

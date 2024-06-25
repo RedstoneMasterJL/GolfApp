@@ -627,3 +627,206 @@ private extension MapProxy {
 
 
  */
+
+/* 24 juni
+ 
+ 
+ //
+ //  DragHolesView.swift
+ //  GolfApp
+ //
+ //  Created by Jonathan Linder on 2024-06-24.
+ //
+
+ import SwiftUI
+ import MapKit
+
+ struct DragHolesView: View {
+     @State var translation: CGSize = .zero
+     @State private var isActive = false
+     @State private var coordinate: CLLocationCoordinate2D = .init(latitude: 57.78191, longitude: 11.95473)
+     
+     @State private var position: MapCameraPosition = .automatic
+     
+     let markers: [HoleMarkerData]
+     
+     init() {
+         markers = [
+             HoleMarkerData(holeNum: 1, greenMarker: GreenMarker(coordinate: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473)),teeMarker: TeeMarker(coordinate: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568)))
+         ]
+     }
+     
+     var body: some View {
+         MapReader { proxy in
+             Map(position: $position) {
+                 
+                 ForEach(markers) { marker in
+                     Annotation("", coordinate: marker.greenMarker.coordinate) {
+                         @Bindable var marker = marker
+                         MarkerView(proxy: proxy, marker: $marker.greenMarker)
+                     }
+                 }
+
+                     
+                 
+             }.mapStyle(.imagery(elevation: .realistic))
+         }
+     }
+ }
+
+ #Preview {
+     DragHolesView()
+ }
+
+ let eaglekorten = [
+
+     Hole(number: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
+ ]
+
+ protocol Markable: Observable, AnyObject {
+     var coordinate: CLLocationCoordinate2D { get set }
+     var isActive: Bool { get set }
+     var translation: CGSize { get set }
+ }
+
+ @Observable
+ class HoleMarkerData: Identifiable {
+     let holeNum: Int
+     var greenMarker: GreenMarker
+     var teeMarker: TeeMarker
+     
+     init(holeNum: Int, greenMarker: GreenMarker, teeMarker: TeeMarker) {
+         self.holeNum = holeNum
+         self.greenMarker = greenMarker
+         self.teeMarker = teeMarker
+     }
+ }
+
+ @Observable
+ class GreenMarker: Markable {
+     var coordinate: CLLocationCoordinate2D
+     var isActive: Bool = false
+     var translation: CGSize = .zero
+     init(coordinate: CLLocationCoordinate2D) {
+         self.coordinate = coordinate
+     }
+ }
+
+ @Observable
+ class TeeMarker: Markable {
+     var coordinate: CLLocationCoordinate2D
+     var isActive: Bool = false
+     var translation: CGSize = .zero
+     init(coordinate: CLLocationCoordinate2D) {
+         self.coordinate = coordinate
+     }
+ }
+
+ struct MarkerView: View {
+     var proxy: MapProxy
+     @Binding var marker: Markable // måste vara bindable
+     
+     var body: some View {
+         GeometryReader {
+             let frame = $0.frame(in: .global)
+             
+             Image(systemName: "dot.scope")
+                 .font(.system(size: 50))
+                 .fontWeight(.thin)
+                 .foregroundStyle(.orange.gradient)
+                 .animation(.snappy, body: { content in
+                     content.scaleEffect(marker.isActive ? 1.3 : 1)
+                 })
+                 .frame(width: frame.width, height: frame.height)
+                 .onChange(of: marker.isActive) { oldValue, newValue in
+                     let position = CGPoint(x: frame.midX, y: frame.midY)
+                     if let coordinate = proxy.convert(position, from: .global) {
+                         marker.coordinate = coordinate
+                         marker.translation = .zero
+                     }
+                 }
+         }
+         .frame(width: 70, height: 70)
+         .contentShape(.rect)
+         .offset(marker.translation)
+         .gesture(
+             LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
+                 .onEnded { marker.isActive = $0 }
+                 .simultaneously(with: DragGesture(minimumDistance: 0)
+                     .onChanged { value in
+                         if marker.isActive { marker.translation = value.translation }
+                     }
+                     .onEnded { value in
+                         if marker.isActive { marker.isActive = false }
+                     }
+                 )
+         )
+     }
+ }
+
+ /*
+  // Green
+  Annotation("1", coordinate: coordinate) {
+      GeometryReader {
+          let frame = $0.frame(in: .global)
+          Image(systemName: "flag.circle.fill")
+              .foregroundStyle(.orange)
+              .animation(.snappy, body: { content in
+                  content.scaleEffect(isActive ? 1.3 : 1)
+              })
+              .onChange(of: isActive) { oldValue, newValue in
+                  let position = CGPoint(x: frame.midX, y: frame.midY)
+                  if let coordinate = proxy.convert(position, from: .global) {
+                      self.coordinate = coordinate
+                      translation = .zero
+                  }
+              }
+      }
+      .offset(translation)
+      .gesture(
+          LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
+              .onEnded { isActive = $0 }
+              .simultaneously(with: DragGesture(minimumDistance: 0)
+                  .onChanged { value in
+                      if isActive { translation = value.translation }
+                  }
+                  .onEnded { value in
+                      if isActive { isActive = false }
+                  }
+              )
+      )
+  }
+  // Tee
+  Annotation("1", coordinate: coordinate2) {
+      GeometryReader {
+          let frame = $0.frame(in: .global)
+          Image(systemName: "t.circle.fill")
+              .foregroundStyle(.yellow)
+              .animation(.snappy, body: { content in
+                  content.scaleEffect(isActive ? 1.3 : 1)
+              })
+              .onChange(of: isActive) { oldValue, newValue in
+                  let position = CGPoint(x: frame.midX, y: frame.midY)
+                  if let coordinate = proxy.convert(position, from: .global) {
+                      self.coordinate2 = coordinate
+                      translation2 = .zero
+                  }
+              }
+      }
+      .offset(translation2)
+      .gesture(
+          LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
+              .onEnded { isActive = $0 }
+              .simultaneously(with: DragGesture(minimumDistance: 0)
+                  .onChanged { value in
+                      if isActive { translation2 = value.translation }
+                  }
+                  .onEnded { value in
+                      if isActive { isActive = false }
+                  }
+              )
+      )
+  }
+  */
+
+ */

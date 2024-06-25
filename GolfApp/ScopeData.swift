@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-private let rectWidth: Double = 80
+let rectWidth: Double = 80
 
 struct ScopeData {
     let coordinate: CLLocationCoordinate2D
@@ -21,12 +21,12 @@ struct ScopeData {
 
 extension MapProxy {
     
-    func markerData(screenCoordinate: CGPoint, geometryProxy: GeometryProxy) -> ScopeData? {
+    func scopeData(screenCoordinate: CGPoint, geometryProxy: GeometryProxy) -> ScopeData? {
         guard let coordinate = convert(screenCoordinate, from: .local) else { return nil }
         return .init(coordinate: coordinate, screenPoint: screenCoordinate)
     }
     
-    func markerData(coordinate: CLLocationCoordinate2D, geometryProxy: GeometryProxy) -> ScopeData? {
+    func scopeData(coordinate: CLLocationCoordinate2D, geometryProxy: GeometryProxy) -> ScopeData? {
         guard let point = convert(coordinate, to: .local) else { return nil }
         return .init(coordinate: coordinate, screenPoint: point)
     }

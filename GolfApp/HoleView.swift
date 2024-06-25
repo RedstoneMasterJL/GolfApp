@@ -20,10 +20,10 @@ struct HoleView: View {
         self.holes = holes
     }
     
-    @State var markerData: MarkerData?
+    @State var scopeData: ScopeData?
     
     var body: some View {
-        HoleMapView(hole: $hole, markerData: $markerData)
+        HoleMapView(hole: $hole, scopeData: $scopeData)
             .safeAreaInset(edge: .bottom) {
                 HStack {
                     ZStack {
@@ -70,7 +70,7 @@ struct HoleView: View {
                     ZStack {
                         rectangle
                         VStack {
-                            if let markerData = markerData {
+                            if let markerData = scopeData {
                                 Text("To scope").font(.footnote)
                                 Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: markerData.coordinate), specifier: "%.0f")").font(.title)
                             } else {
