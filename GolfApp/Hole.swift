@@ -31,6 +31,7 @@ extension CLLocationCoordinate2D: Codable {
     }
 }
 
+
 @Model
 class HoleData {
 
@@ -38,10 +39,26 @@ class HoleData {
     var greenPos: CLLocationCoordinate2D
     var teePos: CLLocationCoordinate2D
     
+   
+    // Camera
+    //var camPos: MapCameraPosition
+    
+    func resetCamPos(camPos: inout MapCameraPosition) {
+        camPos = startCamPos
+    }
+    func camPosIsDefault(camPos: MapCameraPosition) -> Bool {
+        camPos == startCamPos
+    }
+    
     init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
         self.num = num
         self.greenPos = greenPos
         self.teePos = teePos
+        //self.camPos = GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
+    }
+    
+    private var startCamPos: MapCameraPosition {
+        GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
     }
 }
 

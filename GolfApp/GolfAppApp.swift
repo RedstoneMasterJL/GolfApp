@@ -13,8 +13,7 @@ import MapKit
 struct GolfAppApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Course.self,
-            HoleData.self
+            HoleData.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -27,7 +26,7 @@ struct GolfAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            //DragHolesView(albatross18holes)
+            DragHolesView(albatross18holes)
             HoleView(holes: albatross18holes)
             //HomeView()
         }

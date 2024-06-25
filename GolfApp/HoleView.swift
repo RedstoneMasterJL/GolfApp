@@ -16,20 +16,18 @@ struct HoleView: View {
     
     let holes: [HoleData] // Hole array
     
-    @State var camPos: MapCameraPosition
-
     init(holes: [HoleData]) {
         self.hole = holes[0] // First hole
         self.holes = holes
-        
         self.camPos = startCamPos(centerPos: centerPos(greenPos: holes[0].greenPos, teePos: holes[0].teePos), teePos: holes[0].teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: holes[0].teePos, point2: holes[0].greenPos))
     }
     
     @State var scopeData: ScopeData?
+    @State var camPos: MapCameraPosition
     
     
     var body: some View {
-        HoleMapView(hole: $hole, scopeData: $scopeData, camPos: $camPos)
+        HoleMapView(hole: $hole, camPos: $camPos, scopeData: $scopeData)
             .safeAreaInset(edge: .bottom) {
                 HStack {
                     ZStack {
@@ -67,12 +65,10 @@ struct HoleView: View {
                     ZStack {
                         OpacityRectangle()
                         Button {
-                            withAnimation {
-                                resetCamPos(&camPos, to: startCamPos(centerPos: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), teePos: hole.teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: hole.teePos, point2: hole.greenPos)))
-                            }
+                            withAnimation { hole.resetCamPos(camPos: &camPos) }
                         } label: {
                             Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
-                        }.disabled(camPosIsDefault(camPos, with: startCamPos(centerPos: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), teePos: hole.teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: hole.teePos, point2: hole.greenPos))))
+                        }.disabled(hole.camPosIsDefault(camPos: camPos))
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {

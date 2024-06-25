@@ -11,7 +11,8 @@ import MapKit
 struct HoleMapView: View {
     
     @Binding var hole: HoleData
-    
+    @Binding var camPos: MapCameraPosition
+
     @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     @State private var isMarkerDragging = false
     @Binding var scopeData: ScopeData?
@@ -41,11 +42,8 @@ struct HoleMapView: View {
                         .stroke(.orange, lineWidth: 3)
                 }.mapStyle(.imagery(elevation: .realistic))
                     .mapControls { MapScaleView() }
-                    .onChange(of: hole.num, initial: true) { oldValue, newValue in
-                        withAnimation { 
-                            resetCamPos(&camPos, to: startCamPos(centerPos: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), teePos: hole.teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: hole.teePos, point2: hole.greenPos)))
-                            self.scopeData = mapProxy.scopeData(coordinate: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), geometryProxy: geometryProxy)
-                        }
+                    .onChange(of: hole.greenPos.latitude, initial: true) { oldValue, newValue in
+                        withAnimation { hole.resetCamPos(camPos: &camPos); self.scopeData = mapProxy.scopeData(coordinate: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), geometryProxy: geometryProxy) }
                     }
                     .onTapGesture { screenCoordinate in
                         self.scopeData = mapProxy.scopeData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)
