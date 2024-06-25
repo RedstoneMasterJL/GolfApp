@@ -9,11 +9,9 @@ import SwiftUI
 import MapKit
 
 struct DragHolesView: View {
-    @State var translation: CGSize = .zero
-    @State private var isActive = false
-    @State private var coordinate: CLLocationCoordinate2D = .init(latitude: 57.78191, longitude: 11.95473)
     
     @State private var position: MapCameraPosition = .automatic
+    @State private var modes: MapInteractionModes = [.pan, .rotate, .zoom] // Ingen pitching, ser konstigt ut med polylinen då
     
     @State var markers: [HoleMarkerData]
     
@@ -27,7 +25,7 @@ struct DragHolesView: View {
     
     var body: some View {
         MapReader { proxy in
-            Map(position: $position) {
+            Map(position: $position, interactionModes: modes) {
                 ForEach(0..<markers.count, id: \.self) { i in
                     Annotation(String(markers[i].holeNum), coordinate: markers[i].greenMarkerPos) {
                         MarkerView(proxy: proxy, type: .green, coordinate: $markers[i].greenMarkerPos)
