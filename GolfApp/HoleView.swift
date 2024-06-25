@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct HoleView: View {
     
@@ -18,12 +19,14 @@ struct HoleView: View {
     init(holes: [HoleData]) {
         self.hole = holes[0] // First hole
         self.holes = holes
+        self.camPos = startCamPos(centerPos: centerPos(greenPos: holes[0].greenPos, teePos: holes[0].teePos), teePos: holes[0].teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: holes[0].teePos, point2: holes[0].greenPos))
     }
     
     @State var scopeData: ScopeData?
+    @State var camPos: MapCameraPosition
     
     var body: some View {
-        HoleMapView(hole: $hole, scopeData: $scopeData)
+        HoleMapView(hole: $hole, camPos: $camPos, scopeData: $scopeData)
             .safeAreaInset(edge: .bottom) {
                 HStack {
                     ZStack {
@@ -61,10 +64,10 @@ struct HoleView: View {
                     ZStack {
                         OpacityRectangle()
                         Button {
-                            withAnimation { hole.resetCamPos() }
+                            withAnimation { hole.resetCamPos(camPos: &camPos) }
                         } label: {
                             Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
-                        }.disabled(hole.camPosIsDefault)
+                        }.disabled(hole.camPosIsDefault(camPos: camPos))
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {

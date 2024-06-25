@@ -11,7 +11,8 @@ import MapKit
 struct HoleMapView: View {
     
     @Binding var hole: HoleData
-    
+    @Binding var camPos: MapCameraPosition
+
     @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     @State private var isMarkerDragging = false
     @Binding var scopeData: ScopeData?
@@ -19,7 +20,7 @@ struct HoleMapView: View {
     var body: some View {
         GeometryReader { geometryProxy in
             MapReader { mapProxy in
-                Map(position: $hole.camPos, interactionModes: modes) {
+                Map(position: $camPos, interactionModes: modes) {
                     UserAnnotation()
                     Annotation("", coordinate: hole.greenPos) {
                         Circle().fill(.green)
@@ -40,8 +41,8 @@ struct HoleMapView: View {
                         .stroke(.orange, lineWidth: 3)
                 }.mapStyle(.imagery(elevation: .realistic))
                     .mapControls { MapScaleView() }
-                    .onChange(of: hole.num, initial: true) { oldValue, newValue in
-                        withAnimation { hole.resetCamPos(); self.scopeData = mapProxy.scopeData(coordinate: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), geometryProxy: geometryProxy) }
+                    .onChange(of: hole.greenPos.latitude, initial: true) { oldValue, newValue in
+                        withAnimation { hole.resetCamPos(camPos: &camPos); self.scopeData = mapProxy.scopeData(coordinate: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), geometryProxy: geometryProxy) }
                     }
                     .onTapGesture { screenCoordinate in
                         self.scopeData = mapProxy.scopeData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)
