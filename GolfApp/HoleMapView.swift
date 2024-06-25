@@ -10,7 +10,7 @@ import MapKit
 
 struct HoleMapView: View {
     
-    @Binding var hole: Hole
+    @Binding var hole: HoleData
     
     @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch, .rotate]
     @State private var isMarkerDragging = false
@@ -36,12 +36,12 @@ struct HoleMapView: View {
                     Annotation("", coordinate: hole.teePos) {
                         Circle().fill(.yellow)
                     }
-                    MapPolyline(coordinates: [hole.teePos, scopeData?.coordinate ?? hole.centerPos, hole.greenPos], contourStyle: .straight)
+                    MapPolyline(coordinates: [hole.teePos, scopeData?.coordinate ?? hole.teePos, hole.greenPos], contourStyle: .straight)
                         .stroke(.orange, lineWidth: 3)
                 }.mapStyle(.imagery(elevation: .realistic))
                     .mapControls { MapScaleView() }
                     .onChange(of: hole, initial: true) { oldValue, newValue in
-                        withAnimation { hole.resetHole(); self.scopeData = mapProxy.scopeData(coordinate: hole.centerPos, geometryProxy: geometryProxy) }
+                        withAnimation { hole.resetCamPos(); self.scopeData = mapProxy.scopeData(coordinate: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), geometryProxy: geometryProxy) }
                     }
                     .onTapGesture { screenCoordinate in
                         self.scopeData = mapProxy.scopeData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)

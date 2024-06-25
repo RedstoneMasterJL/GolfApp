@@ -11,11 +11,11 @@ struct HoleView: View {
     
     @State var currentHole = 1
     
-    @State var hole: Hole
+    @State var hole: HoleData
     
-    let holes: [Hole] // Hole array
+    let holes: [HoleData] // Hole array
     
-    init(holes: [Hole]) {
+    init(holes: [HoleData]) {
         self.hole = holes[0] // First hole
         self.holes = holes
     }
@@ -61,10 +61,10 @@ struct HoleView: View {
                     ZStack {
                         rectangle
                         Button {
-                            withAnimation { hole.resetHole() }
+                            withAnimation { hole.resetCamPos() }
                         } label: {
                             Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
-                        }.disabled(hole.isDefault)
+                        }.disabled(hole.camPosIsDefault)
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {
