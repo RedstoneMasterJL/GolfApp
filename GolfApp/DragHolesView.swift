@@ -31,11 +31,13 @@ struct DragHolesView: View {
             Map(position: $position) {
                 
                 ForEach(markers) { marker in
-                    Annotation(String(marker.holeNum), coordinate: marker.greenMarker.coordinate) {
-                        MarkerView(proxy: proxy, marker: marker.greenMarker)
+                    @Bindable var marker = marker
+                    Annotation(String(marker.holeNum), coordinate: coordinate) {
+                        MarkerView(proxy: proxy, type: marker.greenMarker.type, coordinate: $coordinate)
+                        //DraggablePin(proxy: proxy, coordinate: $coordinate)
                     }
                     Annotation(String(marker.holeNum), coordinate: marker.teeMarker.coordinate) {
-                        MarkerView(proxy: proxy, marker: marker.teeMarker)
+                        MarkerView(proxy: proxy, type: marker.teeMarker.type, coordinate: $marker.teeMarker.coordinate)
                     }
                 }
                 
@@ -92,11 +94,13 @@ class HoleMarkerData: Identifiable {
 @Observable
 class HoleMarker {
     let type: MarkerType
-    var translation: CGSize = .zero
-    var isActive = false
-    var coordinate: CLLocationCoordinate2D = .init(latitude: 57.78191, longitude: 11.95473)
+    //var translation: CGSize
+    //var isActive: Bool
+    var coordinate: CLLocationCoordinate2D
     init(type: MarkerType, coordinate: CLLocationCoordinate2D) {
         self.type = type
+//        self.translation = .zero
+//        self.isActive = false
         self.coordinate = coordinate
     }
 }
@@ -104,38 +108,43 @@ class HoleMarker {
 
 struct MarkerView: View {
     var proxy: MapProxy
-    @Bindable var marker: HoleMarker
+    //@Binding var marker: HoleMarker
+    
+    let type: MarkerType
+    @State private var translation: CGSize = .zero
+    @State private var isActive: Bool = false
+    @Binding var coordinate: CLLocationCoordinate2D
     
     var body: some View {
         GeometryReader {
             let frame = $0.frame(in: .global)
             
-            Image(systemName: marker.type == .green ? "flag.circle.fill" : "t.circle.fill")
-                .foregroundStyle(marker.type == .green ? .orange : .yellow)
+            Image(systemName: type == .green ? "flag.circle.fill" : "t.circle.fill")
+                .foregroundStyle(type == .green ? .orange : .yellow)
                 .animation(.snappy, body: { content in
-                    content.scaleEffect(marker.isActive ? 1.3 : 1)
+                    content.scaleEffect(isActive ? 1.3 : 1)
                 })
                 .frame(width: frame.width, height: frame.height)
-                .onChange(of: marker.isActive) { oldValue, newValue in
+                .onChange(of: isActive, initial: false) { oldValue, newValue in
                     let position = CGPoint(x: frame.midX, y: frame.midY)
                     if let coordinate = proxy.convert(position, from: .global) {
-                        marker.coordinate = coordinate
-                        marker.translation = .zero
+                        self.coordinate = coordinate
+                        translation = .zero
                     }
                 }
         }
         .frame(width: 70, height: 70)
         .contentShape(.rect)
-        .offset(marker.translation)
+        .offset(translation)
         .gesture(
             LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
-                .onEnded { marker.isActive = $0 }
+                .onEnded { isActive = $0 }
                 .simultaneously(with: DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        if marker.isActive { marker.translation = value.translation }
+                        if isActive { translation = value.translation }
                     }
                     .onEnded { value in
-                        if marker.isActive { marker.isActive = false }
+                        if isActive { isActive = false }
                     }
                 )
         )
