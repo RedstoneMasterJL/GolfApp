@@ -8,72 +8,35 @@
 import SwiftUI
 import MapKit
 
-/*@Observable
-class Hole: Equatable {
-    static func == (lhs: Hole, rhs: Hole) -> Bool {
-        lhs.number == rhs.number
-    } // kanske farligt med number i framtiden
+@Observable
+class HoleData {
+
+    let num: Int
+    var greenPos: CLLocationCoordinate2D
+    var teePos: CLLocationCoordinate2D
     
-    // A hole has
-    let number: Int
-    let greenPos: CLLocationCoordinate2D
-    let teePos: CLLocationCoordinate2D
-    
-    // Marker and camera
-    var scopePos: CLLocationCoordinate2D
+   
+    // Camera
     var camPos: MapCameraPosition
-    let startCamPos: MapCameraPosition
-    let centerPos: CLLocationCoordinate2D
-
-    // Distance tee - green
-    let teeGreenDistance: Double
-
-    var teeScopeDistance: Double {
-        distanceBetweenTwoPoints(point1: teePos, point2: scopePos)
-    }
     
-    var scopeGreenDistance: Double {
-        distanceBetweenTwoPoints(point1: scopePos, point2: greenPos)
-    }
-
-    func resetScopePos() {
-        scopePos = centerPos
-    }
     func resetCamPos() {
         camPos = startCamPos
     }
-    func resetHole() {
-        resetScopePos()
-        resetCamPos()
-    }
-    var isDefault: Bool {
-        print("-----------------")
-        print("Hole number \(number)")
-        let centerScopeLatIsSame = centerPos.latitude == scopePos.latitude
-        print("centerScopeLatIsSame \(centerScopeLatIsSame)")
-        print("Center lat: " + String(centerPos.latitude))
-        print("Scope lat: " + String(scopePos.latitude))
-        let centerScopeLongIsSame = centerPos.longitude == scopePos.longitude
-        print("centerScopeLongIsSame \(centerScopeLongIsSame)")
-        let camPosStartCamPosIsSame = camPos == startCamPos
-        print("camPosStartCamPosIsSame \(camPosStartCamPosIsSame)")
-        return centerScopeLatIsSame && centerScopeLongIsSame && camPosStartCamPosIsSame
+    var camPosIsDefault: Bool {
+        camPos == startCamPos
     }
     
-    init(number: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
-        self.number = number
+    init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
+        self.num = num
         self.greenPos = greenPos
         self.teePos = teePos
-        let centerPos = GolfApp.centerPos(greenPos: greenPos, teePos: teePos)
-        let teeGreenDistance = GolfApp.distanceBetweenTwoPoints(point1: greenPos, point2: teePos)
-        let startCamPos = GolfApp.startCamPos(centerPos: centerPos, teePos: teePos, teeGreenDistance: teeGreenDistance)
-        self.scopePos = centerPos
-        self.camPos = startCamPos
-        self.startCamPos = startCamPos
-        self.centerPos = centerPos
-        self.teeGreenDistance = teeGreenDistance
+        self.camPos = GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
     }
-}*/
+    
+    private var startCamPos: MapCameraPosition {
+        GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
+    }
+}
 
 func startCamPos(centerPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D, teeGreenDistance: Double) -> MapCameraPosition {
     .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))

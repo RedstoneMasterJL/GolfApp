@@ -40,7 +40,7 @@ struct HoleMapView: View {
                         .stroke(.orange, lineWidth: 3)
                 }.mapStyle(.imagery(elevation: .realistic))
                     .mapControls { MapScaleView() }
-                    .onChange(of: hole, initial: true) { oldValue, newValue in
+                    .onChange(of: hole.num, initial: true) { oldValue, newValue in
                         withAnimation { hole.resetCamPos(); self.scopeData = mapProxy.scopeData(coordinate: centerPos(greenPos: hole.greenPos, teePos: hole.teePos), geometryProxy: geometryProxy) }
                     }
                     .onTapGesture { screenCoordinate in

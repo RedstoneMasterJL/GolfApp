@@ -72,43 +72,6 @@ enum MarkerType {
     case green, tee
 }
 
-@Observable
-class HoleData: Identifiable, Equatable {
-    static func == (lhs: HoleData, rhs: HoleData) -> Bool {
-        lhs.num == rhs.num
-    }
-    
-    let num: Int
-    var greenPos: CLLocationCoordinate 2D
-    var teePos: CLLocationCoordinate2D
-    
-   
-    // Camera
-    var camPos: MapCameraPosition
-    
-    func resetCamPos() {
-        camPos = startCamPos
-    }
-    var camPosIsDefault: Bool {
-        camPos == startCamPos
-    }
-    
-    init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
-        self.num = num
-        self.greenPos = greenPos
-        self.teePos = teePos
-        self.camPos = GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
-    }
-    
-    private var startCamPos: MapCameraPosition {
-        GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
-    }
-    
-    
-    
-}
-
-
 struct MarkerView: View {
     var proxy: MapProxy
     
