@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7600103D2C282F3C00E20CE8 /* ScopeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7600103C2C282F3C00E20CE8 /* ScopeData.swift */; };
 		7600103F2C29BD5700E20CE8 /* DragHolesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7600103E2C29BD5700E20CE8 /* DragHolesView.swift */; };
+		76735F352C2B0E8A003303B6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76735F342C2B0E8A003303B6 /* HomeView.swift */; };
 		76BB08012C23288300A5C559 /* GolfAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08002C23288300A5C559 /* GolfAppApp.swift */; };
 		76BB08032C23288300A5C559 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08022C23288300A5C559 /* ContentView.swift */; };
 		76BB08052C23288300A5C559 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08042C23288300A5C559 /* Item.swift */; };
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		7600103C2C282F3C00E20CE8 /* ScopeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopeData.swift; sourceTree = "<group>"; };
 		7600103E2C29BD5700E20CE8 /* DragHolesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragHolesView.swift; sourceTree = "<group>"; };
+		76735F342C2B0E8A003303B6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		76BB07FD2C23288300A5C559 /* GolfApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GolfApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76BB08002C23288300A5C559 /* GolfAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GolfAppApp.swift; sourceTree = "<group>"; };
 		76BB08022C23288300A5C559 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				76BB08172C2494C600A5C559 /* Hole.swift */,
 				76BB08152C235BEE00A5C559 /* TestView.swift */,
 				76BB08042C23288300A5C559 /* Item.swift */,
+				76735F342C2B0E8A003303B6 /* HomeView.swift */,
 				76BB08062C23288600A5C559 /* Assets.xcassets */,
 				76BB08082C23288600A5C559 /* GolfApp.entitlements */,
 				76BB08092C23288600A5C559 /* Preview Content */,
@@ -175,6 +178,7 @@
 				76BB08012C23288300A5C559 /* GolfAppApp.swift in Sources */,
 				76BB081E2C26085600A5C559 /* DraggablePin.swift in Sources */,
 				76BB08142C234A3400A5C559 /* HoleMapView.swift in Sources */,
+				76735F352C2B0E8A003303B6 /* HomeView.swift in Sources */,
 				76BB081A2C25FE6500A5C559 /* Binding+.swift in Sources */,
 				76BB08202C26F36D00A5C559 /* HoleView.swift in Sources */,
 			);
