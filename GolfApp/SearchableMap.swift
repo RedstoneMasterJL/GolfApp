@@ -4,1025 +4,197 @@
 //
 //  Created by Jonathan Linder on 2024-06-19.
 //
-/*
-import SwiftUI
-import MapKit
-import Combine
-
-struct TestView: View {
-    
-    @ObservedObject var mapSettings = MapSettings()
-    @State var mapType = 0
-    @State var showElevation = 0
-    @State var showEmphasis = 0
-    
-    var body: some View {
-        ZStack {
-            
-            MapView(greenPos: holes[1].greenPos, teePos: holes[1].teePos)
-                .edgesIgnoringSafeArea(.all).environmentObject(mapSettings)
-            
-        }.overlay(alignment: .bottom) {
-            
-            VStack {
-                Picker("Map Type", selection: $mapType) {
-                    Text("Standard").tag(0)
-                    Text("Hybrid").tag(1)
-                    Text("Image").tag(2)
-                }.pickerStyle(SegmentedPickerStyle())
-                    .onChange(of: mapType) { newValue in
-                        mapSettings.mapType = newValue
-                    }.padding([.top, .leading, .trailing], 16)
-                
-                Picker("Map Elevation", selection: $showElevation) {
-                    Text("Realistic").tag(0)
-                    Text("Flat").tag(1)
-                }.pickerStyle(SegmentedPickerStyle())
-                    .onChange(of: showElevation) { newValue in
-                        mapSettings.showElevation = newValue
-                    }.padding([.leading, .trailing], 16)
-                
-                Picker("Map Elevation", selection: $showEmphasis) {
-                    Text("Default").tag(0)
-                    Text("Muted").tag(1)
-                }.pickerStyle(SegmentedPickerStyle())
-                    .onChange(of: showEmphasis) { newValue in
-                        mapSettings.showEmphasisStyle = newValue
-                    }.padding([.leading, .trailing], 16)
-                
-            }.background(.black)
-        }
-    }
-}
-
-struct MapView: UIViewRepresentable {
-    
-    private var counter = 0
-    private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 57.77988, longitude: 11.94977),
-                                               span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003))
-    let greenPos: CLLocationCoordinate2D
-    let teePos: CLLocationCoordinate2D
-    let centerPos: CLLocationCoordinate2D
-    
-    init(greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
-        centerPos = CLLocationCoordinate2D(latitude: (greenPos.latitude + teePos.latitude) / 2, longitude: (greenPos.longitude + teePos.longitude) / 2)
-        self.greenPos = greenPos
-        self.teePos = teePos
-        
-        let greenLoc = CLLocation(latitude: greenPos.latitude, longitude: greenPos.longitude)
-        let teeLoc = CLLocation(latitude: teePos.latitude, longitude: teePos.longitude)
-        //let centerLoc = CLLocation(latitude: centerPos.latitude, longitude: centerPos.longitude)
-        let distance = greenLoc.distance(from: teeLoc)
-        print(distance)
-        
-        startMKCam = MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: distance * 2.5)
-        
-    }
-    @State var startMKCam: MKMapCamera
-
-    
-    @EnvironmentObject private var mapSettings: MapSettings
-
-    func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView(frame: .zero)
-        mapView.camera = startMKCam
-        
-        return mapView
-    }
-    
-    func updateUIView(_ uiView: MKMapView, context: Context) {
-        updateMapType(uiView)
-    }
-    
-    private func updateMapType(_ uiView: MKMapView) {
-        switch mapSettings.mapType {
-        case 0:
-            uiView.preferredConfiguration = MKStandardMapConfiguration(elevationStyle: elevationStyle(), emphasisStyle: emphasisStyle())
-        case 1:
-            uiView.preferredConfiguration = MKHybridMapConfiguration(elevationStyle: elevationStyle())
-        case 2:
-            uiView.preferredConfiguration = MKImageryMapConfiguration(elevationStyle: elevationStyle())
-        default:
-            break
-        }
-        
-    }
-    
-    private func elevationStyle() -> MKMapConfiguration.ElevationStyle {
-        if mapSettings.showElevation == 0 {
-            return MKMapConfiguration.ElevationStyle.realistic
-        } else {
-            return MKMapConfiguration.ElevationStyle.flat
-        }
-    }
-    
-    private func emphasisStyle() -> MKStandardMapConfiguration.EmphasisStyle {
-        if mapSettings.showEmphasisStyle == 0 {
-            return MKStandardMapConfiguration.EmphasisStyle.default
-        } else {
-            return MKStandardMapConfiguration.EmphasisStyle.muted
-        }
-    }
-}
-
-final class MapSettings: ObservableObject {
-    @Published var mapType = 0
-    @Published var showElevation = 0
-    @Published var showEmphasisStyle = 0
-}
-*/ 
-/*
- https://stackoverflow.com/questions/77354568/swiftui-mapkit-drag-annotation
-//
-//  HoleMapView.swift
-//  GolfApp
-//
-//  Created by Jonathan Linder on 2024-06-19.
-//
 
 import SwiftUI
 import MapKit
 
-private let rectWidth: Double = 80
+ struct SearchableMap: View {
+     @State private var position = MapCameraPosition.automatic
+     @State private var searchResults = [SearchResult]()
+     @State private var selectedLocation: SearchResult?
+     @State private var isSheetPresented: Bool = true
 
-private struct MarkerData {
-    let coordinate: CLLocationCoordinate2D
-    let screenPoint: CGPoint
-
-    var touchableRect: CGRect {
-        .init(x: screenPoint.x - rectWidth / 2, y: screenPoint.y - rectWidth / 2, width: rectWidth, height: rectWidth)
-    }
-}
-
-struct HoleMapView: View {
-
-    @State private var cameraPosition: MapCameraPosition = .automatic
-    @State private var modes: MapInteractionModes = [.zoom, .pan, .pitch]
-    @State private var isMarkerDragging = false
-    @State private var markerData: MarkerData?
-
-    @Binding var hole: Hole
-
-    var body: some View {
-        GeometryReader { geometryProxy in
-            MapReader { mapProxy in
-                Map(position: Binding<MapCameraPosition>(get: {
-                    .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
-                }, set: { newValue in }), interactionModes: modes) {
-                    UserAnnotation()
-                    Annotation("", coordinate: hole.greenPos) {
-                        Circle().fill(.green)
-                    }
-                    if let markerData {
-                        Marker("Start", coordinate: markerData.coordinate)
-//                        Annotation("", coordinate: markerData.coordinate) {
-//                            Image(systemName: "scope").foregroundStyle(.blue)
-//                        }
-                    }
-                    Annotation("", coordinate: hole.teePos) {
-                        Circle().fill(.yellow)
-                    }
-                }.mapStyle(.hybrid(elevation: .realistic))
-                .onTapGesture { screenCoordinate in
-                    self.markerData = mapProxy.markerData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)
-                }
-                .highPriorityGesture(DragGesture(minimumDistance: 1)
-                    .onChanged { drag in
-                        guard let markerData else { return }
-                        if isMarkerDragging {
-
-                        } else if markerData.touchableRect.contains(drag.startLocation) {
-                            isMarkerDragging = true
-                            setMapInteraction(enabled: false)
-                        } else {
-                            return
-                        }
-
-                        self.markerData = mapProxy.markerData(screenCoordinate: drag.location, geometryProxy: geometryProxy)
-                    }
-                    .onEnded { drag in
-                        setMapInteraction(enabled: true)
-                        isMarkerDragging = false
-                    }
-                )
-                .onMapCameraChange {
-                    guard let markerData else { return }
-                    self.markerData = mapProxy.markerData(coordinate: markerData.coordinate, geometryProxy: geometryProxy)
-                }
-                .onAppear {
-                    self.markerData = mapProxy.markerData(coordinate: hole.centerPos, geometryProxy: geometryProxy)
-                }
-            }
-        }
-    }
-
-    private func setMapInteraction(enabled: Bool) {
-        if enabled {
-            modes = [.zoom, .pan, .pitch]
-        } else {
-            modes = []
-        }
-    }
-}
-
-private extension MapProxy {
-
-    func markerData(screenCoordinate: CGPoint, geometryProxy: GeometryProxy) -> MarkerData? {
-        guard let coordinate = convert(screenCoordinate, from: .local) else { return nil }
-        return .init(coordinate: coordinate, screenPoint: screenCoordinate)
-    }
-
-    func markerData(coordinate: CLLocationCoordinate2D, geometryProxy: GeometryProxy) -> MarkerData? {
-        guard let point = convert(coordinate, to: .local) else { return nil }
-        return .init(coordinate: coordinate, screenPoint: point)
-    }
-}
-*/
-
-
-
-/*
- https://www.youtube.com/watch?v=5Z7kYPnPbUE
- //
- //  HoleMapView.swift
- //  GolfApp
- //
- //  Created by Jonathan Linder on 2024-06-19.
- //
-
- import SwiftUI
- import MapKit
-
- struct HoleMapView: View {
-     
-     @Binding var hole: Hole
-     let modes: MapInteractionModes = [.zoom, .pitch]
-     
-     @State var coordinate: CLLocationCoordinate2D = holes[0].centerPos
+     @State private var showDragHolesView = false
      
      var body: some View {
-         MapReader { proxy in
-             Map(position: Binding<MapCameraPosition>(get: {
-                 .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
-             }, set: { newValue in
-                 
-             }), interactionModes: modes) {
-                 UserAnnotation()
-                 Annotation("", coordinate: hole.greenPos) {
-                     Circle().fill(.green)
-                 }
-                 Annotation("", coordinate: hole.centerPos) {
-                     //Image(systemName: "scope").foregroundStyle(.blue)
-                     Pin(proxy: proxy, coordinates: $coordinate)
-                 }
-                 Annotation("", coordinate: hole.teePos) {
-                     Circle().fill(.yellow)
-                 }
-             }.mapStyle(.hybrid(elevation: .realistic))
+         Map(position: $position, selection: $selectedLocation) {
+             ForEach(searchResults) { result in
+                 Marker(result.title, coordinate: result.location)
+                 .tag(result)
+             }
+         }.mapStyle(.hybrid(elevation: .realistic))
+         .ignoresSafeArea()
+         .onChange(of: selectedLocation) {
+             isSheetPresented = selectedLocation == nil
          }
-     }
- }
-
- #Preview {
-     HoleMapView(hole: .constant(holes[0]))
- }
-
- struct Pin: View {
-     var proxy: MapProxy
-     @Binding var coordinates: CLLocationCoordinate2D
-     @State private var isActive = false
-     @State private var translation: CGSize = .zero
-     
-     var body: some View {
-         GeometryReader { geometry in
-             let frame = geometry.frame(in: .global)
-             
-             Image(systemName: "location.circle.fill")
-                 .font(.largeTitle)
-                 .foregroundColor(isActive ? .blue : .red)
-                 .scaleEffect(isActive ? 1.3 : 1)
-                 .animation(.bouncy, value: isActive)
-                 .frame(width: 30, height: 30)
-                 .contentShape(Rectangle())
-                 .offset(translation)
-                 .gesture(
-                     LongPressGesture(minimumDuration: 0.2)
-                         .onEnded { _ in
-                             isActive = true
-                         }
-                         .simultaneously(with: DragGesture()
-                             .onChanged { value in
-                                 if isActive {
-                                     translation = value.translation
-                                 }
-                             }
-                             .onEnded { value in
-                                 if isActive {
-                                     isActive = false
-                                     
-                                     // Update coordinates and call the callback
-                                     let position = CGPoint(x: frame.midX + translation.width, y: frame.midY + translation.height)
-                                     if let coordinate = proxy.convert(position, from: .global) {
-                                         self.coordinates = coordinate
-                                         translation = .zero
-                                     }
-                                 }
-                             }
-                         )
-                 )
+         .onChange(of: searchResults) {
+             if let firstResult = searchResults.first, searchResults.count == 1 {
+                 selectedLocation = firstResult
+             }
          }
-     }
- }
-
-
- */
-
-
-
-/*
- 21 juni 17:42
- //
- //  HoleMapView.swift
- //  GolfApp
- //
- //  Created by Jonathan Linder on 2024-06-19.
- //
-
- import SwiftUI
- import MapKit
-
- struct HoleMapView: View {
-     
-     @Binding var hole: Hole
-     @State var modes: MapInteractionModes = [.zoom, .pitch]
-     @State private var cameraPosition: MapCameraPosition = .automatic
-     @State private var isMarkerDragging = false
-     @State private var markerData: MarkerData?
-     
-     var body: some View {
-         GeometryReader { geometryProxy in
-             MapReader { mapProxy in
-                 Map(position: Binding<MapCameraPosition>(get: {
-                     .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
-                 }, set: { newValue in
-                     
-                 }), interactionModes: modes) {
-                     if let markerData {
-                         Annotation("", coordinate: markerData.coordinate) {
-                             Image(systemName: "scope").foregroundStyle(.blue)
-                         }
+         .sheet(isPresented: $isSheetPresented) {
+             SheetView(searchResults: $searchResults)
+         }
+         .safeAreaInset(edge: .bottom) {
+             if let selectedLocation = selectedLocation {
+                 ZStack {
+                     OpacityRectangle()
+                     HStack {
+                         Text(selectedLocation.title)
+                         Button(action: {
+                             withAnimation { showDragHolesView = true }
+                         }, label: {
+                             Image(systemName: "arrow.right")
+                         })
                      }
-                     UserAnnotation()
-                     Annotation("", coordinate: hole.greenPos) {
-                         Circle().fill(.green)
-                     }
-                     Annotation("", coordinate: hole.teePos) {
-                         Circle().fill(.yellow)
-                     }
-                 }.mapStyle(.hybrid(elevation: .realistic))
-                     .mapControls { MapScaleView() }
-                     .onTapGesture { screenCoordinate in
-                         self.markerData = mapProxy.markerData(screenCoordinate: screenCoordinate, geometryProxy: geometryProxy)
-                     }
-                     .highPriorityGesture(DragGesture(minimumDistance: 1)
-                         .onChanged { drag in
-                             guard let markerData else { return }
-                             if isMarkerDragging {
-                                 
-                             } else if markerData.touchableRect.contains(drag.startLocation) {
-                                 isMarkerDragging = true
-                                 setMapInteraction(enabled: false)
-                             } else {
-                                 return
-                             }
-                             
-                             self.markerData = mapProxy.markerData(screenCoordinate: drag.location, geometryProxy: geometryProxy)
-                         }
-                         .onEnded { drag in
-                             setMapInteraction(enabled: true)
-                             isMarkerDragging = false
-                         }
-                     )
-                     .onMapCameraChange {
-                         guard let markerData else { return }
-                         self.markerData = mapProxy.markerData(coordinate: markerData.coordinate, geometryProxy: geometryProxy)
-                     }
+                 }.frame(maxWidth: 300, maxHeight: 60)
+             }
+         }
+         .overlay {
+             if let selectedLocation = selectedLocation {
+                 if showDragHolesView {
+                     DragHolesView([HoleData(num: 1, greenPos: selectedLocation.location, teePos: selectedLocation.location)])
+                 }
              }
          }
      }
-     private func setMapInteraction(enabled: Bool) {
-         if enabled {
-             modes = [.zoom, .pitch]
-         } else {
-             modes = []
-         }
-     }
  }
 
+ #Preview(body: {
+     SearchableMap()
+ })
 
+ struct SheetView: View {
+     @State private var locationService = LocationService(completer: .init())
+     @State private var search: String = ""
+     @Binding var searchResults: [SearchResult]
 
- #Preview {
-     HoleMapView(hole: .constant(holes[0]))
- }
-
- private let rectWidth: Double = 80
-
- private struct MarkerData {
-     let coordinate: CLLocationCoordinate2D
-     let screenPoint: CGPoint
-     
-     var touchableRect: CGRect {
-         .init(x: screenPoint.x - rectWidth / 2, y: screenPoint.y - rectWidth / 2, width: rectWidth, height: rectWidth)
-     }
- }
-
- private extension MapProxy {
-     
-     func markerData(screenCoordinate: CGPoint, geometryProxy: GeometryProxy) -> MarkerData? {
-         guard let coordinate = convert(screenCoordinate, from: .local) else { return nil }
-         return .init(coordinate: coordinate, screenPoint: screenCoordinate)
-     }
-     
-     func markerData(coordinate: CLLocationCoordinate2D, geometryProxy: GeometryProxy) -> MarkerData? {
-         guard let point = convert(coordinate, to: .local) else { return nil }
-         return .init(coordinate: coordinate, screenPoint: point)
-     }
- }
-
- */
-
-/*
- 19:48
- //
- //  HoleMapView.swift
- //  GolfApp
- //
- //  Created by Jonathan Linder on 2024-06-19.
- //
-
- import SwiftUI
- import MapKit
-
- struct HoleMapView: View {
-     
-     @Binding var hole: Hole
-     let modes: MapInteractionModes = [.zoom, .pan, .pitch]
-     
-     @State var coordinate: CLLocationCoordinate2D?
-     @State var position: MapCameraPosition?
-     
      var body: some View {
-         MapReader { proxy in
-             Map(position: Binding<MapCameraPosition>(get: {
-                 .camera(MapCamera(MKMapCamera(lookingAtCenter: hole.centerPos, fromEyeCoordinate: hole.teePos, eyeAltitude: hole.teeGreenDistance * 2.5)))
-             }, set: { newValue in
-                 position = newValue
-                 print(position?.camera?.centerCoordinate)
-             }), interactionModes: modes) {
-                 UserAnnotation()
-                 Annotation("", coordinate: hole.greenPos) {
-                     Circle().fill(.green)
-                 }
-                 Annotation("", coordinate: coordinate ?? hole.centerPos) {
-                     DraggablePin(proxy: proxy, coordinate: $coordinate.withDefault(hole.centerPos))
-                 }
-                 Annotation("", coordinate: hole.teePos) {
-                     Circle().fill(.yellow)
-                 }
-             }.mapStyle(.hybrid(elevation: .realistic))
-                 .mapControls { MapScaleView(); Button("test") {  } }
-                 .onChange(of: hole) { oldValue, newValue in
-                     coordinate = hole.centerPos
-                 }
-                 .onMapCameraChange(frequency: .continuous) {
-                     let centerPos = hole.centerPos
-                     let regionRadius: Double = 500 // meter
-                     let northEastCoordinate = CLLocationCoordinate2D(latitude: centerPos.latitude + regionRadius / 111000.0, longitude: centerPos.longitude + regionRadius / (111000.0 * cos(centerPos.latitude * .pi / 180.0)))
-                     let southWestCoordinate = CLLocationCoordinate2D(latitude: centerPos.latitude - regionRadius / 111000.0, longitude: centerPos.longitude - regionRadius / (111000.0 * cos(centerPos.latitude * .pi / 180.0)))
-                     
-                     var region = position?.region
-                     
-                     if region?.center.latitude ?? centerPos.latitude > northEastCoordinate.latitude {
-                         position = .region(MKCoordinateRegion(center: centerPos, span: MKCoordinateSpan(latitudeDelta: northEastCoordinate.latitude, longitudeDelta: region?.center.longitude ?? centerPos.longitude)))
+         VStack {
+             HStack {
+                 Image(systemName: "magnifyingglass")
+                 TextField("Search for a golf club", text: $search)
+                     .autocorrectionDisabled()
+                     .onSubmit {
+                         Task {
+                             searchResults = (try? await locationService.search(with: search)) ?? []
+                         }
                      }
-                     if region?.center.latitude ?? centerPos.latitude < southWestCoordinate.latitude {
-                         position = .region(MKCoordinateRegion(center: centerPos, span: MKCoordinateSpan(latitudeDelta: northEastCoordinate.latitude, longitudeDelta: region?.center.longitude ?? centerPos.longitude)))
+             }
+             .modifier(TextFieldGrayBackgroundColor())
+
+             Spacer()
+
+             List {
+                 ForEach(locationService.completions) { completion in
+                     Button(action: { didTapOnCompletion(completion) }) {
+                         VStack(alignment: .leading, spacing: 4) {
+                             Text(completion.title)
+                                 .font(.headline)
+                                 .fontDesign(.rounded)
+                             Text(completion.subTitle)
+                             if let url = completion.url {
+                                 Link(url.absoluteString, destination: url)
+                                     .lineLimit(1)
+                             }
+                         }
                      }
-                     if region?.center.longitude ?? centerPos.latitude > northEastCoordinate.longitude {
-                         position = .region(MKCoordinateRegion(center: centerPos, span: MKCoordinateSpan(latitudeDelta: region?.center.latitude ?? centerPos.longitude, longitudeDelta: northEastCoordinate.latitude)))
-                     }
-                     if region?.center.longitude ?? centerPos.latitude < southWestCoordinate.longitude {
-                         position = .region(MKCoordinateRegion(center: centerPos, span: MKCoordinateSpan(latitudeDelta: region?.center.latitude ?? centerPos.longitude, longitudeDelta: northEastCoordinate.latitude)))
-                     }
-                     
+                     .listRowBackground(Color.clear)
                  }
+             }
+             .listStyle(.plain)
+             .scrollContentBackground(.hidden)
          }
-     }
-     
-     func checkCanPan() {
-         let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-         let region = MKCoordinateRegion(center: hole.centerPos, span: span)
-         if position?.region?.span.longitudeDelta ?? 0.1 > span.longitudeDelta {
-             position = .region(region)
+         .onChange(of: search) {
+             locationService.update(queryFragment: search)
          }
+         .padding()
+         .interactiveDismissDisabled()
+         .presentationDetents([.height(200), .large])
+         .presentationBackground(.regularMaterial)
+         .presentationBackgroundInteraction(.enabled(upThrough: .large))
      }
- }
 
- struct DraggablePin: View {
-     var proxy: MapProxy
-     @Binding var coordinate: CLLocationCoordinate2D
-     @State private var isActive = false
-     @State private var translation: CGSize = .zero
-     
-     var body: some View {
-         GeometryReader {
-             let frame = $0.frame(in: .global)
-             
-             Image(systemName: "dot.scope")
-                 .font(.system(size: 50))
-                 .fontWeight(.thin)
-                 .foregroundStyle(.orange.gradient)
-                 .animation(.snappy, body: { content in
-                     content.scaleEffect(isActive ? 1.3 : 1)
-                 })
-                 .frame(width: frame.width, height: frame.height)
-                 .onChange(of: isActive, initial: false) { oldValue, newValue in
-                     let position = CGPoint(x: frame.midX, y: frame.midY)
-                     if let coordinate = proxy.convert(position, from: .global) {
-                         self.coordinate = coordinate
-                         translation = .zero
-                     }
-                 }
-         }
-         .frame(width: 70, height: 70)
-         .contentShape(.rect)
-         .offset(translation)
-         .gesture(
-             LongPressGesture(minimumDuration: 0)
-                 .onEnded { isActive = $0 }
-                 .simultaneously(with: DragGesture(minimumDistance: 0)
-                     .onChanged { value in
-                         if isActive { translation = value.translation }
-                     }
-                     .onEnded { value in
-                         if isActive { isActive = false }
-                     }
-                 )
-         )
-     }
- }
-
- #Preview {
-     HoleMapView(hole: .constant(holes[0]))
- }
-
- extension Binding {
-   func withDefault<T>(_ defaultValue: T) -> Binding<T> where Value == Optional<T> {
-     return Binding<T>(get: {
-       self.wrappedValue ?? defaultValue
-     }, set: { newValue in
-       self.wrappedValue = newValue
-     })
-   }
- }
-
- */
-
-/*
- TEST 22 juni 21:14
- //
- //  HoleCameraManager.swift
- //  GolfApp
- //
- //  Created by Jonathan Linder on 2024-06-22.
- //
-
- import SwiftUI
- import MapKit
-
- @Observable
- class HoleCameraManager {
-     
-     var currentHole: Hole
-     
-     var camPos: MapCameraPosition
-     
-     let startCamPos: MapCameraPosition
-     
-     
-     init(currentHole: Hole) {
-         self.currentHole = currentHole
-         self.startCamPos = GolfApp.cameraSetupFor(centerPos: currentHole.centerPos, teePos: currentHole.teePos, teeGreenDistance: currentHole.teeGreenDistance)
-         self.camPos = startCamPos
-     }
-     
-     func resetCamPos() {
-         camPos = startCamPos
-     }
- }
-
- func cameraSetupFor(centerPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D, teeGreenDistance: Double) -> MapCameraPosition {
-     .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))
- }
-
-
- */
-
-/* 24 juni
- 
- 
- //
- //  DragHolesView.swift
- //  GolfApp
- //
- //  Created by Jonathan Linder on 2024-06-24.
- //
-
- import SwiftUI
- import MapKit
-
- struct DragHolesView: View {
-     @State var translation: CGSize = .zero
-     @State private var isActive = false
-     @State private var coordinate: CLLocationCoordinate2D = .init(latitude: 57.78191, longitude: 11.95473)
-     
-     @State private var position: MapCameraPosition = .automatic
-     
-     let markers: [HoleMarkerData]
-     
-     init() {
-         markers = [
-             HoleMarkerData(holeNum: 1, greenMarker: GreenMarker(coordinate: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473)),teeMarker: TeeMarker(coordinate: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568)))
-         ]
-     }
-     
-     var body: some View {
-         MapReader { proxy in
-             Map(position: $position) {
-                 
-                 ForEach(markers) { marker in
-                     Annotation("", coordinate: marker.greenMarker.coordinate) {
-                         @Bindable var marker = marker
-                         MarkerView(proxy: proxy, marker: $marker.greenMarker)
-                     }
-                 }
-
-                     
-                 
-             }.mapStyle(.imagery(elevation: .realistic))
+     private func didTapOnCompletion(_ completion: SearchCompletions) {
+         Task {
+             if let singleLocation = try? await locationService.search(with: "\(completion.title) \(completion.subTitle)").first {
+                 searchResults = [singleLocation]
+             }
          }
      }
  }
 
- #Preview {
-     DragHolesView()
+ struct SearchCompletions: Identifiable {
+     let id = UUID()
+     let title: String
+     let subTitle: String
+     var url: URL?
  }
 
- let eaglekorten = [
+ struct SearchResult: Identifiable, Hashable {
+     let id = UUID()
+     let location: CLLocationCoordinate2D
+     let title: String
 
-     Hole(number: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
- ]
+     static func == (lhs: SearchResult, rhs: SearchResult) -> Bool {
+         lhs.id == rhs.id
+     }
 
- protocol Markable: Observable, AnyObject {
-     var coordinate: CLLocationCoordinate2D { get set }
-     var isActive: Bool { get set }
-     var translation: CGSize { get set }
- }
-
- @Observable
- class HoleMarkerData: Identifiable {
-     let holeNum: Int
-     var greenMarker: GreenMarker
-     var teeMarker: TeeMarker
-     
-     init(holeNum: Int, greenMarker: GreenMarker, teeMarker: TeeMarker) {
-         self.holeNum = holeNum
-         self.greenMarker = greenMarker
-         self.teeMarker = teeMarker
+     func hash(into hasher: inout Hasher) {
+         hasher.combine(id)
      }
  }
 
  @Observable
- class GreenMarker: Markable {
-     var coordinate: CLLocationCoordinate2D
-     var isActive: Bool = false
-     var translation: CGSize = .zero
-     init(coordinate: CLLocationCoordinate2D) {
-         self.coordinate = coordinate
-     }
- }
+ class LocationService: NSObject, MKLocalSearchCompleterDelegate {
+     private let completer: MKLocalSearchCompleter
+     var completions = [SearchCompletions]()
 
- @Observable
- class TeeMarker: Markable {
-     var coordinate: CLLocationCoordinate2D
-     var isActive: Bool = false
-     var translation: CGSize = .zero
-     init(coordinate: CLLocationCoordinate2D) {
-         self.coordinate = coordinate
+     init(completer: MKLocalSearchCompleter) {
+         self.completer = completer
+         super.init()
+         self.completer.delegate = self
      }
- }
 
- struct MarkerView: View {
-     var proxy: MapProxy
-     @Binding var marker: Markable // måste vara bindable
-     
-     var body: some View {
-         GeometryReader {
-             let frame = $0.frame(in: .global)
-             
-             Image(systemName: "dot.scope")
-                 .font(.system(size: 50))
-                 .fontWeight(.thin)
-                 .foregroundStyle(.orange.gradient)
-                 .animation(.snappy, body: { content in
-                     content.scaleEffect(marker.isActive ? 1.3 : 1)
-                 })
-                 .frame(width: frame.width, height: frame.height)
-                 .onChange(of: marker.isActive) { oldValue, newValue in
-                     let position = CGPoint(x: frame.midX, y: frame.midY)
-                     if let coordinate = proxy.convert(position, from: .global) {
-                         marker.coordinate = coordinate
-                         marker.translation = .zero
-                     }
-                 }
+     func update(queryFragment: String) {
+         completer.resultTypes = .pointOfInterest
+         completer.queryFragment = queryFragment
+     }
+
+     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+         completions = completer.results.map { completion in
+             let mapItem = completion.value(forKey: "_mapItem") as? MKMapItem
+             return .init(
+                 title: completion.title,
+                 subTitle: completion.subtitle,
+                 url: mapItem?.url
+             )
          }
-         .frame(width: 70, height: 70)
-         .contentShape(.rect)
-         .offset(marker.translation)
-         .gesture(
-             LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
-                 .onEnded { marker.isActive = $0 }
-                 .simultaneously(with: DragGesture(minimumDistance: 0)
-                     .onChanged { value in
-                         if marker.isActive { marker.translation = value.translation }
-                     }
-                     .onEnded { value in
-                         if marker.isActive { marker.isActive = false }
-                     }
-                 )
-         )
+     }
+
+     func search(with query: String, coordinate: CLLocationCoordinate2D? = nil) async throws -> [SearchResult] {
+         let request = MKLocalSearch.Request()
+         request.naturalLanguageQuery = "\(query) golf"
+         request.resultTypes = .pointOfInterest
+         if let coordinate {
+             request.region = .init(.init(origin: .init(coordinate), size: .init(width: 1, height: 1)))
+         }
+         let search = MKLocalSearch(request: request)
+         let response = try await search.start()
+
+         return response.mapItems.compactMap { mapItem in
+             guard let location = mapItem.placemark.location?.coordinate else { return nil }
+             return .init(location: location, title: mapItem.name ?? "")
+         }
      }
  }
 
- /*
-  // Green
-  Annotation("1", coordinate: coordinate) {
-      GeometryReader {
-          let frame = $0.frame(in: .global)
-          Image(systemName: "flag.circle.fill")
-              .foregroundStyle(.orange)
-              .animation(.snappy, body: { content in
-                  content.scaleEffect(isActive ? 1.3 : 1)
-              })
-              .onChange(of: isActive) { oldValue, newValue in
-                  let position = CGPoint(x: frame.midX, y: frame.midY)
-                  if let coordinate = proxy.convert(position, from: .global) {
-                      self.coordinate = coordinate
-                      translation = .zero
-                  }
-              }
-      }
-      .offset(translation)
-      .gesture(
-          LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
-              .onEnded { isActive = $0 }
-              .simultaneously(with: DragGesture(minimumDistance: 0)
-                  .onChanged { value in
-                      if isActive { translation = value.translation }
-                  }
-                  .onEnded { value in
-                      if isActive { isActive = false }
-                  }
-              )
-      )
-  }
-  // Tee
-  Annotation("1", coordinate: coordinate2) {
-      GeometryReader {
-          let frame = $0.frame(in: .global)
-          Image(systemName: "t.circle.fill")
-              .foregroundStyle(.yellow)
-              .animation(.snappy, body: { content in
-                  content.scaleEffect(isActive ? 1.3 : 1)
-              })
-              .onChange(of: isActive) { oldValue, newValue in
-                  let position = CGPoint(x: frame.midX, y: frame.midY)
-                  if let coordinate = proxy.convert(position, from: .global) {
-                      self.coordinate2 = coordinate
-                      translation2 = .zero
-                  }
-              }
-      }
-      .offset(translation2)
-      .gesture(
-          LongPressGesture(minimumDuration: 0.10) // så att man ej råkar ta i den
-              .onEnded { isActive = $0 }
-              .simultaneously(with: DragGesture(minimumDistance: 0)
-                  .onChanged { value in
-                      if isActive { translation2 = value.translation }
-                  }
-                  .onEnded { value in
-                      if isActive { isActive = false }
-                  }
-              )
-      )
-  }
-  */
-
- */
-
-// testade med chatgpt på denna
-import SwiftUI
-import MapKit
-
-struct SearchableMap: View {
-    @State private var position = MapCameraPosition.automatic
-    @State private var searchResults = [SearchResult]()
-    @State private var selectedLocation: SearchResult?
-    @State private var isSheetPresented: Bool = true
-
-    @State private var showDragHolesView = false
-    
-    var body: some View {
-        Map(position: $position, selection: $selectedLocation) {
-            ForEach(searchResults) { result in
-                Marker(result.title, coordinate: result.location)
-                .tag(result)
-            }
-        }.mapStyle(.hybrid(elevation: .realistic))
-        .ignoresSafeArea()
-        .onChange(of: selectedLocation) {
-            isSheetPresented = selectedLocation == nil
-        }
-        .onChange(of: searchResults) {
-            if let firstResult = searchResults.first, searchResults.count == 1 {
-                selectedLocation = firstResult
-            }
-        }
-        .sheet(isPresented: $isSheetPresented) {
-            SheetView(searchResults: $searchResults)
-        }
-        .safeAreaInset(edge: .bottom) {
-            if let selectedLocation = selectedLocation {
-                ZStack {
-                    OpacityRectangle()
-                    HStack {
-                        Text(selectedLocation.title)
-                        Button(action: {
-                            withAnimation { showDragHolesView = true }
-                        }, label: {
-                            Image(systemName: "arrow.right")
-                        })
-                    }
-                }.frame(maxWidth: 300, maxHeight: 60)
-            }
-        }
-        .overlay {
-            if let selectedLocation = selectedLocation {
-                if showDragHolesView {
-                    DragHolesView([HoleData(num: 1, greenPos: selectedLocation.location, teePos: selectedLocation.location)])
-                }
-            }
-        }
-    }
-}
-
-#Preview(body: {
-    SearchableMap()
-})
-
-struct SheetView: View {
-    @State private var locationService = LocationService(completer: .init())
-    @State private var search: String = ""
-    @Binding var searchResults: [SearchResult]
-
-    var body: some View {
-        VStack {
-            HStack {
-                Image(systemName: "magnifyingglass")
-                TextField("Search for a golf club", text: $search)
-                    .autocorrectionDisabled()
-                    .onSubmit {
-                        Task {
-                            searchResults = (try? await locationService.search(with: search)) ?? []
-                        }
-                    }
-            }
-            .modifier(TextFieldGrayBackgroundColor())
-
-            Spacer()
-
-            List {
-                ForEach(locationService.completions) { completion in
-                    Button(action: { didTapOnCompletion(completion) }) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(completion.title)
-                                .font(.headline)
-                                .fontDesign(.rounded)
-                            Text(completion.subTitle)
-                            if let url = completion.url {
-                                Link(url.absoluteString, destination: url)
-                                    .lineLimit(1)
-                            }
-                        }
-                    }
-                    .listRowBackground(Color.clear)
-                }
-            }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-        }
-        .onChange(of: search) {
-            locationService.update(queryFragment: search)
-        }
-        .padding()
-        .interactiveDismissDisabled()
-        .presentationDetents([.height(200), .large])
-        .presentationBackground(.regularMaterial)
-        .presentationBackgroundInteraction(.enabled(upThrough: .large))
-    }
-
-    private func didTapOnCompletion(_ completion: SearchCompletions) {
-        Task {
-            if let singleLocation = try? await locationService.search(with: "\(completion.title) \(completion.subTitle)").first {
-                searchResults = [singleLocation]
-            }
-        }
-    }
-}
-
-struct SearchCompletions: Identifiable {
-    let id = UUID()
-    let title: String
-    let subTitle: String
-    var url: URL?
-}
-
-struct SearchResult: Identifiable, Hashable {
-    let id = UUID()
-    let location: CLLocationCoordinate2D
-    let title: String
-
-    static func == (lhs: SearchResult, rhs: SearchResult) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
-@Observable
-class LocationService: NSObject, MKLocalSearchCompleterDelegate {
-    private let completer: MKLocalSearchCompleter
-    var completions = [SearchCompletions]()
-
-    init(completer: MKLocalSearchCompleter) {
-        self.completer = completer
-        super.init()
-        self.completer.delegate = self
-    }
-
-    func update(queryFragment: String) {
-        completer.resultTypes = .pointOfInterest
-        completer.queryFragment = queryFragment
-    }
-
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        completions = completer.results.map { completion in
-            let mapItem = completion.value(forKey: "_mapItem") as? MKMapItem
-            return .init(
-                title: completion.title,
-                subTitle: completion.subtitle,
-                url: mapItem?.url
-            )
-        }
-    }
-
-    func search(with query: String, coordinate: CLLocationCoordinate2D? = nil) async throws -> [SearchResult] {
-        let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = "\(query) golf"
-        request.resultTypes = .pointOfInterest
-        if let coordinate {
-            request.region = .init(.init(origin: .init(coordinate), size: .init(width: 1, height: 1)))
-        }
-        let search = MKLocalSearch(request: request)
-        let response = try await search.start()
-
-        return response.mapItems.compactMap { mapItem in
-            guard let location = mapItem.placemark.location?.coordinate else { return nil }
-            return .init(location: location, title: mapItem.name ?? "")
-        }
-    }
-}
-
-struct TextFieldGrayBackgroundColor: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding(12)
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(8)
-            .foregroundColor(.primary)
-    }
-}
-
+ struct TextFieldGrayBackgroundColor: ViewModifier {
+     func body(content: Content) -> some View {
+         content
+             .padding(12)
+             .background(Color.gray.opacity(0.1))
+             .cornerRadius(8)
+             .foregroundColor(.primary)
+     }
+ }

@@ -7,8 +7,28 @@
 
 import SwiftUI
 import MapKit
+import SwiftData
 
-@Observable
+extension CLLocationCoordinate2D: Codable {
+    public enum CodingKeys: String, CodingKey {
+        case latitude
+        case longitude
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(latitude, forKey: .latitude)
+        try container.encode(longitude, forKey: .longitude)
+        }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        latitude = try values.decode(Double.self, forKey: .latitude)
+        longitude = try values.decode(Double.self, forKey: .longitude)
+    }
+}
+
+@Model
 class HoleData {
 
     let num: Int
@@ -61,3 +81,15 @@ let albatross18holes = [
     HoleData(num: 5, greenPos: CLLocationCoordinate2D(latitude: 57.78102, longitude: 11.94500), teePos: CLLocationCoordinate2D(latitude: 57.78171, longitude: 11.94645))
 
 ]
+
+
+@Model
+class Course {
+    let name: String
+    var holes: [HoleData]
+    
+    init(name: String, holes: [HoleData]) {
+        self.name = name
+        self.holes = holes
+    }
+}

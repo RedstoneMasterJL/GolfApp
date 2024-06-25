@@ -10,31 +10,34 @@ import MapKit
 
 struct DragHolesView: View {
     
+    @Environment(\.modelContext) var moc
+    @Environment(\.dismiss) var dismiss
+
     @State private var position: MapCameraPosition = .automatic
     @State private var modes: MapInteractionModes = [.pan, .rotate, .zoom] // Ingen pitching, ser konstigt ut med polylinen då
     
-    @State var markers: [HoleData]
+    @State var holes: [HoleData]
     
     @State private var currentHole: Int
 
-    init(_ markers: [HoleData]? = nil) {
-        self.markers = markers ?? [
+    init(_ holes: [HoleData]? = nil) {
+        self.holes = holes ?? [
             HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
         ]
-        currentHole = markers?.count ?? 1
+        currentHole = holes?.count ?? 1
     }
     
     var body: some View {
         MapReader { proxy in
             Map(position: $position, interactionModes: modes) {
-                ForEach(0..<markers.count, id: \.self) { i in
-                    Annotation(String(markers[i].num), coordinate: markers[i].greenPos) {
-                        MarkerView(proxy: proxy, type: .green, coordinate: $markers[i].greenPos)
+                ForEach(0..<holes.count, id: \.self) { i in
+                    Annotation(String(holes[i].num), coordinate: holes[i].greenPos) {
+                        MarkerView(proxy: proxy, type: .green, coordinate: $holes[i].greenPos)
                     }
-                    Annotation(String(markers[i].num), coordinate: markers[i].teePos) {
-                        MarkerView(proxy: proxy, type: .tee, coordinate: $markers[i].teePos)
+                    Annotation(String(holes[i].num), coordinate: holes[i].teePos) {
+                        MarkerView(proxy: proxy, type: .tee, coordinate: $holes[i].teePos)
                     }
-                    MapPolyline(coordinates: [markers[i].greenPos, markers[i].teePos])
+                    MapPolyline(coordinates: [holes[i].greenPos, holes[i].teePos])
                         .stroke(.orange, lineWidth: 2)
                 }
                 
@@ -42,18 +45,22 @@ struct DragHolesView: View {
             
                 .safeAreaInset(edge: .top) {
                     HStack {
-                        Text("Lägg till hål")
+                        Button("Spara") {
+                            let newCourse = Course(name: "Test", holes: holes)
+                            moc.insert(newCourse)
+                            dismiss()
+                        }
                         Divider().frame(maxHeight: 15)
                         Text("Nuvarande hål \(currentHole)")
                         Button("+") {
-                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
-                            markers.append(newHoleMarker)
+                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: holes[currentHole-1].greenPos, teePos: holes[currentHole-1].greenPos)
+                            holes.append(newHoleMarker)
                             currentHole += 1
-                        }.disabled(markers.count == 18)
+                        }.disabled(holes.count == 18)
                         Button("-") {
-                            markers.removeLast()
+                            holes.removeLast()
                             currentHole -= 1
-                        }.disabled(markers.count == 1)
+                        }.disabled(holes.count == 1)
                     }.frame(maxWidth: .infinity).padding(.bottom).background(.orange.gradient)
                 }
         }
