@@ -841,6 +841,8 @@ struct SearchableMap: View {
     @State private var selectedLocation: SearchResult?
     @State private var isSheetPresented: Bool = true
 
+    @State private var showDragHolesView = false
+    
     var body: some View {
         Map(position: $position, selection: $selectedLocation) {
             ForEach(searchResults) { result in
@@ -860,8 +862,34 @@ struct SearchableMap: View {
         .sheet(isPresented: $isSheetPresented) {
             SheetView(searchResults: $searchResults)
         }
+        .safeAreaInset(edge: .bottom) {
+            if let selectedLocation = selectedLocation {
+                ZStack {
+                    OpacityRectangle()
+                    HStack {
+                        Text(selectedLocation.title)
+                        Button(action: {
+                            withAnimation { showDragHolesView = true }
+                        }, label: {
+                            Image(systemName: "arrow.right")
+                        })
+                    }
+                }.frame(maxWidth: 300, maxHeight: 60)
+            }
+        }
+        .overlay {
+            if let selectedLocation = selectedLocation {
+                if showDragHolesView {
+                    DragHolesView([HoleData(num: 1, greenPos: selectedLocation.location, teePos: selectedLocation.location)])
+                }
+            }
+        }
     }
 }
+
+#Preview(body: {
+    SearchableMap()
+})
 
 struct SheetView: View {
     @State private var locationService = LocationService(completer: .init())
@@ -997,3 +1025,4 @@ struct TextFieldGrayBackgroundColor: ViewModifier {
             .foregroundColor(.primary)
     }
 }
+

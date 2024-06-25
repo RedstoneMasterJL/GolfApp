@@ -27,7 +27,7 @@ struct HoleView: View {
             .safeAreaInset(edge: .bottom) {
                 HStack {
                     ZStack {
-                        rectangle
+                        OpacityRectangle()
                         Button {
                             withAnimation {
                                 currentHole -= 1
@@ -39,7 +39,7 @@ struct HoleView: View {
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {
-                        rectangle
+                        OpacityRectangle()
                         Button {
                             withAnimation {
                                 currentHole += 1
@@ -55,11 +55,11 @@ struct HoleView: View {
             .safeAreaInset(edge: .top) {
                 HStack {
                     ZStack {
-                        rectangle
+                        OpacityRectangle()
                         Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
                     }.frame(maxWidth: 60)
                     ZStack {
-                        rectangle
+                        OpacityRectangle()
                         Button {
                             withAnimation { hole.resetCamPos() }
                         } label: {
@@ -68,7 +68,7 @@ struct HoleView: View {
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {
-                        rectangle
+                        OpacityRectangle()
                         VStack {
                             if let markerData = scopeData {
                                 Text("To scope").font(.footnote)
@@ -85,12 +85,16 @@ struct HoleView: View {
     
     @Environment(\.colorScheme) var clrScheme
     
-    private var rectangle: some View {
-        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(clrScheme == .dark ? .black.opacity(0.6) : .white.opacity(0.6))
-
-    }
+    
 }
 
 #Preview {
     HoleView(holes: albatross18holes)
+}
+
+struct OpacityRectangle: View {
+    @Environment(\.colorScheme) var clrScheme
+    var body: some View {
+        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(clrScheme == .dark ? .black.opacity(0.6) : .white.opacity(0.6))
+    }
 }

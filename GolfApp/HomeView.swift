@@ -10,26 +10,30 @@ import MapKit
 
 
 struct HomeView: View {
+    @State private var showNewCourse = false
+    
     var body: some View {
         NavigationStack {
             VStack {
                 Text("Välkommen!")
-                NavigationLink {
+                Button {
                     
-                    //FindCourseView()
-                    SearchableMap()
+                    showNewCourse = true
+                    
                 } label: {
                     Text("Ny bana")
                 }
-                
-                
             }
-
+        }
+        .overlay {
+            if showNewCourse {
+                withAnimation { SearchableMap() }
+            }
         }
         
     }
 }
 
 #Preview {
-    SearchableMap()
+    HomeView()
 }
