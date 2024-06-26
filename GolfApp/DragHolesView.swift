@@ -15,15 +15,17 @@ struct DragHolesView: View {
     
     @State var markers: [HoleData]
     
-    @State var currentHole = 1
+    @State var currentHole: Int
 
     init(_ markers: [HoleData]? = nil) {
         if let markers = markers {
             self.markers = markers
+            currentHole = markers.count
         } else {
             self.markers = [
                 HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
             ]
+            currentHole = 1
         }
     }
     
@@ -52,7 +54,7 @@ struct DragHolesView: View {
                     HStack {
                         Button("Spara") { showSaveSheet.toggle() }
                         Divider().frame(maxHeight: 15)
-                        Text("Nuvarande hål \(currentHole)")
+                        Text("Antal hål satta \(currentHole)")
                         Button("+") {
                             let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
                             markers.append(newHoleMarker)
