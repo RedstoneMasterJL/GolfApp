@@ -50,21 +50,44 @@ struct DragHolesView: View {
                 
             }.mapStyle(.imagery(elevation: .realistic))
             
+//                .safeAreaInset(edge: .top) {
+//                    HStack {
+//                        Button("Spara") { showSaveSheet.toggle() }
+//                        Divider().frame(maxHeight: 15)
+//                        Text("Antal hål satta \(currentHole)")
+//                        Button("+") {
+//                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
+//                            markers.append(newHoleMarker)
+//                            currentHole += 1
+//                        }.disabled(markers.count == 18)
+//                        Button("-") {
+//                            markers.removeLast()
+//                            currentHole -= 1
+//                        }.disabled(markers.count == 1)
+//                    }.frame(maxWidth: .infinity).padding(.bottom).background(.orange.gradient)
+//                }
+                .safeAreaInset(edge: .bottom) {
+                    HStack {
+                        Text("")
+                            .rectBg()
+                        Spacer()
+                        Text("Eaglekorten")
+                            .rectBg()
+                        
+                        Spacer()
+                        Text("")
+                            .rectBg()
+
+                    }.frame(maxHeight: 60).padding()
+                }
                 .safeAreaInset(edge: .top) {
                     HStack {
-                        Button("Spara") { showSaveSheet.toggle() }
-                        Divider().frame(maxHeight: 15)
-                        Text("Antal hål satta \(currentHole)")
-                        Button("+") {
-                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
-                            markers.append(newHoleMarker)
-                            currentHole += 1
-                        }.disabled(markers.count == 18)
-                        Button("-") {
-                            markers.removeLast()
-                            currentHole -= 1
-                        }.disabled(markers.count == 1)
-                    }.frame(maxWidth: .infinity).padding(.bottom).background(.orange.gradient)
+                            Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
+                            .rectBg()
+                        Spacer()
+                            Text("Spara")
+                            .rectBg()
+                    }.frame(maxHeight: 60).padding()
                 }
         }.sheet(isPresented: $showSaveSheet, content: {
             VStack(content: {

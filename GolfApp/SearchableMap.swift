@@ -37,17 +37,14 @@ import MapKit
          }
          .safeAreaInset(edge: .bottom) {
              if let selectedLocation = selectedLocation {
-                 ZStack {
-                     OpacityRectangle()
-                     HStack {
-                         Text(selectedLocation.title)
-                         Button(action: {
-                             withAnimation { showDragHolesView = true }
-                         }, label: {
-                             Image(systemName: "arrow.right")
-                         })
-                     }
-                 }.frame(maxWidth: 300, maxHeight: 60)
+                 HStack {
+                     Text(selectedLocation.title)
+                     Button(action: {
+                         withAnimation { showDragHolesView = true }
+                     }, label: {
+                         Image(systemName: "arrow.right")
+                     })
+                 }.rectBg()
              }
          }
          .overlay {
@@ -62,10 +59,8 @@ import MapKit
                  Button {
                      dismiss()
                  } label: {
-                     ZStack {
-                         OpacityRectangle()
-                         Image(systemName: "arrow.left").font(.title)
-                     }.frame(maxWidth: 60, maxHeight: 60)
+                     Image(systemName: "arrow.left").font(.title)
+                         .rectBg()
                  }
                  Spacer()
              }.padding()

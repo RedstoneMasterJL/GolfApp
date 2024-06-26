@@ -33,60 +33,47 @@ struct HoleView: View {
         HoleMapView(hole: $hole, scopeData: $scopeData)
             .safeAreaInset(edge: .bottom) {
                 HStack {
-                    ZStack {
-                        OpacityRectangle()
-                        Button {
-                            withAnimation {
-                                currentHole -= 1
-                                hole = holes[currentHole-1]
-                            }
-                        } label: {
-                            Image(systemName: "arrow.left").font(.title).frame(width: 50, height: 50)
-                        }.disabled(currentHole == 1)
-                    }.frame(maxWidth: 60)
+                    Button {
+                        withAnimation {
+                            currentHole -= 1
+                            hole = holes[currentHole-1]
+                        }
+                    } label: {
+                        Image(systemName: "arrow.left").font(.title)
+                    }.disabled(currentHole == 1)
+                        .rectBg()
                     Spacer()
-                    ZStack {
-                        OpacityRectangle()
-                        Button {
-                            withAnimation {
-                                currentHole += 1
-                                hole = holes[currentHole-1]
-                            }
-                        } label: {
-                            Image(systemName: "arrow.right").font(.title).frame(width: 50, height: 50)
-                        }.disabled(currentHole == holes.count)
-                    }.frame(maxWidth: 60)
-                    
-                }.frame(maxHeight: 60).padding()
+                    Button {
+                        withAnimation {
+                            currentHole += 1
+                            hole = holes[currentHole-1]
+                        }
+                    } label: {
+                        Image(systemName: "arrow.right").font(.title)
+                    }.disabled(currentHole == holes.count)
+                        .rectBg()
+                }.padding()
             }
             .safeAreaInset(edge: .top) {
                 HStack {
-                    ZStack {
-                        OpacityRectangle()
-                        Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
-                    }.frame(maxWidth: 60)
-                    ZStack {
-                        OpacityRectangle()
-                        Button {
-                            withAnimation { hole.resetCamPos() }
-                        } label: {
-                            Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
-                        }.disabled(hole.camPosIsDefault)
-                    }.frame(maxWidth: 60)
+                    Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
+                        .rectBg()
+                    Button {
+                        withAnimation { hole.resetCamPos() }
+                    } label: {
+                        Image(systemName: "arrow.circlepath").font(.title)
+                    }.disabled(hole.camPosIsDefault).rectBg()
                     Spacer()
-                    ZStack {
-                        OpacityRectangle()
-                        VStack {
-                            if let scopeData = scopeData {
-                                Text("To scope").font(.footnote)
-                                Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: scopeData.coordinate), specifier: "%.0f")").font(.title)
-                            } else {
-                                Text("Place scope")
-                                Text("---").font(.title)
-                            }
+                    VStack {
+                        if let scopeData = scopeData {
+                            Text("To scope").font(.footnote)
+                            Text("\(distanceBetweenTwoPoints(point1: hole.teePos, point2: scopeData.coordinate), specifier: "%.0f")").font(.title)
+                        } else {
+                            Text("Place scope").font(.footnote)
+                            Text("--").font(.title)
                         }
-                    }.frame(maxWidth: 100)
-                }.frame(maxHeight: 60).padding()
+                    }.rectBg(expandable: true)
+                }.padding()
             }
     }
     
@@ -97,11 +84,4 @@ struct HoleView: View {
 
 #Preview {
     HoleView(holes: toHoleDataArray(holes: albatross18holes))
-}
-
-struct OpacityRectangle: View {
-    @Environment(\.colorScheme) var clrScheme
-    var body: some View {
-        RoundedRectangle(cornerRadius: 25.0).foregroundStyle(clrScheme == .dark ? .black.opacity(0.6) : .white.opacity(0.6))
-    }
 }

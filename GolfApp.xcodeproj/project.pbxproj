@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7600103D2C282F3C00E20CE8 /* ScopeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7600103C2C282F3C00E20CE8 /* ScopeData.swift */; };
 		7600103F2C29BD5700E20CE8 /* DragHolesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7600103E2C29BD5700E20CE8 /* DragHolesView.swift */; };
+		760EB66B2C2C7F6700D715CC /* OpacityRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 760EB66A2C2C7F6600D715CC /* OpacityRect.swift */; };
 		76735F352C2B0E8A003303B6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76735F342C2B0E8A003303B6 /* HomeView.swift */; };
 		76B475FF2C2C16D9000DE86D /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76B475FE2C2C16D9000DE86D /* MarkerView.swift */; };
 		76BB08012C23288300A5C559 /* GolfAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08002C23288300A5C559 /* GolfAppApp.swift */; };
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		7600103C2C282F3C00E20CE8 /* ScopeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopeData.swift; sourceTree = "<group>"; };
 		7600103E2C29BD5700E20CE8 /* DragHolesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragHolesView.swift; sourceTree = "<group>"; };
+		760EB66A2C2C7F6600D715CC /* OpacityRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityRect.swift; sourceTree = "<group>"; };
 		76735F342C2B0E8A003303B6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		76B475FE2C2C16D9000DE86D /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
 		76BB07FD2C23288300A5C559 /* GolfApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GolfApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,6 +82,7 @@
 			children = (
 				76BB08002C23288300A5C559 /* GolfAppApp.swift */,
 				76BB081F2C26F36C00A5C559 /* HoleView.swift */,
+				760EB66A2C2C7F6600D715CC /* OpacityRect.swift */,
 				7600103E2C29BD5700E20CE8 /* DragHolesView.swift */,
 				76B475FE2C2C16D9000DE86D /* MarkerView.swift */,
 				76BB08132C234A3400A5C559 /* HoleMapView.swift */,
@@ -181,6 +184,7 @@
 				76BB08012C23288300A5C559 /* GolfAppApp.swift in Sources */,
 				76BB081E2C26085600A5C559 /* DraggablePin.swift in Sources */,
 				76B475FF2C2C16D9000DE86D /* MarkerView.swift in Sources */,
+				760EB66B2C2C7F6700D715CC /* OpacityRect.swift in Sources */,
 				76BB08142C234A3400A5C559 /* HoleMapView.swift in Sources */,
 				76735F352C2B0E8A003303B6 /* HomeView.swift in Sources */,
 				76BB081A2C25FE6500A5C559 /* Binding+.swift in Sources */,
