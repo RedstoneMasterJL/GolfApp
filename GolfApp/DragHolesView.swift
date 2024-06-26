@@ -73,13 +73,13 @@ enum MarkerType {
 }
 
 @Observable
-class HoleData: Identifiable, Equatable {
+class HoleData {
     static func == (lhs: HoleData, rhs: HoleData) -> Bool {
         lhs.num == rhs.num
     }
     
     let num: Int
-    var greenPos: CLLocationCoordinate 2D
+    var greenPos: CLLocationCoordinate2D
     var teePos: CLLocationCoordinate2D
     
    
