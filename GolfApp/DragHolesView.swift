@@ -27,6 +27,11 @@ struct DragHolesView: View {
         }
     }
     
+    @State var showSaveSheet = false
+    @State var text = ""
+    @Environment(\.modelContext) var moc
+    @Environment(\.dismiss) var dismiss
+
     var body: some View {
         MapReader { proxy in
             Map(position: $position, interactionModes: modes) {
@@ -45,7 +50,7 @@ struct DragHolesView: View {
             
                 .safeAreaInset(edge: .top) {
                     HStack {
-                        Text("Lägg till hål")
+                        Button("Spara") { showSaveSheet.toggle() }
                         Divider().frame(maxHeight: 15)
                         Text("Nuvarande hål \(currentHole)")
                         Button("+") {
@@ -59,7 +64,16 @@ struct DragHolesView: View {
                         }.disabled(markers.count == 1)
                     }.frame(maxWidth: .infinity).padding(.bottom).background(.orange.gradient)
                 }
-        }
+        }.sheet(isPresented: $showSaveSheet, content: {
+            VStack(content: {
+                TextField("Namn", text: $text)
+                Button("Spara") {
+                    let newCourse = Course(name: text, holes: toHoleArray(holeDataArray: markers))
+                    moc.insert(newCourse)
+                    dismiss
+                }
+            })
+        })
     }
 }
 

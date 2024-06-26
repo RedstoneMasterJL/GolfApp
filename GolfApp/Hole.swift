@@ -78,6 +78,9 @@ class HoleData {
     private var startCamPos: MapCameraPosition {
         GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
     }
+    func toHole() -> Hole {
+        Hole(num: num, greenPos: greenPos, teePos: teePos)
+    }
 }
 
 // SwiftData hole
@@ -104,6 +107,15 @@ func toHoleDataArray(holes: [Hole]) -> [HoleData] {
         holeDataArray.append(holeData)
     }
     return holeDataArray
+}
+
+func toHoleArray(holeDataArray: [HoleData]) -> [Hole] {
+    var holeArray: [Hole] = []
+    for holeData in holeDataArray {
+        let hole = holeData.toHole()
+        holeArray.append(hole)
+    }
+    return holeArray
 }
 
 extension CLLocationCoordinate2D: Codable {

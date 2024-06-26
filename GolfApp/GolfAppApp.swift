@@ -14,6 +14,7 @@ struct GolfAppApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Hole.self,
+            Course.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -26,9 +27,9 @@ struct GolfAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DragHolesView()
-            HoleView(holes: toHoleDataArray(holes: albatross18holes))
-            //HomeView()
+            //DragHolesView()
+            //HoleView(holes: toHoleDataArray(holes: albatross18holes))
+            HomeView()
         }
         .modelContainer(sharedModelContainer)
     }
