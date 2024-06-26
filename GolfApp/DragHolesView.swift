@@ -70,7 +70,7 @@ struct DragHolesView: View {
                 Button("Spara") {
                     let newCourse = Course(name: text, holes: toHoleArray(holeDataArray: markers))
                     moc.insert(newCourse)
-                    dismiss
+                    dismiss()
                 }
             })
         })
