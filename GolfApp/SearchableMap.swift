@@ -14,8 +14,8 @@ import MapKit
      @State private var selectedLocation: SearchResult?
      @State private var isSheetPresented: Bool = true
 
-     @State private var showDragHolesView = false
-     
+     @Binding var showDragHolesView: Bool
+     @Environment(\.dismiss) var dismiss
      var body: some View {
          Map(position: $position, selection: $selectedLocation) {
              ForEach(searchResults) { result in
@@ -57,11 +57,24 @@ import MapKit
                  }
              }
          }
+         .safeAreaInset(edge: .top) {
+             HStack {
+                 Button {
+                     dismiss()
+                 } label: {
+                     ZStack {
+                         OpacityRectangle()
+                         Image(systemName: "arrow.left").font(.title)
+                     }.frame(maxWidth: 60, maxHeight: 60)
+                 }
+                 Spacer()
+             }.padding()
+         }
      }
  }
 
  #Preview(body: {
-     SearchableMap()
+     SearchableMap(showDragHolesView: .constant(false))
  })
 
  struct SheetView: View {

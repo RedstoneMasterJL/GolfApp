@@ -14,6 +14,8 @@ struct HomeView: View {
 
     @Query var courses: [Course]
     
+    @State var showDragHolesView = false
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -25,22 +27,11 @@ struct HomeView: View {
                         NavigationLink("Gå", destination: HoleView(holes: toHoleDataArray(holes: course.holes)))
                     }
                 }
-                
-                Button {
-                    
-                    showNewCourse = true
-                    
-                } label: {
-                    Text("Ny bana")
+                NavigationLink("ny") {
+                    SearchableMap(showDragHolesView: $showDragHolesView).navigationBarBackButtonHidden(true)
                 }
             }
         }
-        .overlay {
-            if showNewCourse {
-                withAnimation { SearchableMap() }
-            }
-        }
-        
     }
 }
 
