@@ -10,34 +10,30 @@ import MapKit
 
 struct DragHolesView: View {
     
-    @Environment(\.modelContext) var moc
-    @Environment(\.dismiss) var dismiss
-
     @State private var position: MapCameraPosition = .automatic
     @State private var modes: MapInteractionModes = [.pan, .rotate, .zoom] // Ingen pitching, ser konstigt ut med polylinen då
     
-    @State var holes: [HoleData]
+    @State var markers: [HoleData]
     
-    @State private var currentHole: Int
+    @State var currentHole = 1
 
-    init(_ holes: [HoleData]? = nil) {
-        self.holes = holes ?? [
+    init() {
+        markers = [
             HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
         ]
-        currentHole = holes?.count ?? 1
     }
     
     var body: some View {
         MapReader { proxy in
             Map(position: $position, interactionModes: modes) {
-                ForEach(0..<holes.count, id: \.self) { i in
-                    Annotation(String(holes[i].num), coordinate: holes[i].greenPos) {
-                        MarkerView(proxy: proxy, type: .green, coordinate: $holes[i].greenPos)
+                ForEach(0..<markers.count, id: \.self) { i in
+                    Annotation(String(markers[i].num), coordinate: markers[i].greenPos) {
+                        MarkerView(proxy: proxy, type: .green, coordinate: $markers[i].greenPos)
                     }
-                    Annotation(String(holes[i].num), coordinate: holes[i].teePos) {
-                        MarkerView(proxy: proxy, type: .tee, coordinate: $holes[i].teePos)
+                    Annotation(String(markers[i].num), coordinate: markers[i].teePos) {
+                        MarkerView(proxy: proxy, type: .tee, coordinate: $markers[i].teePos)
                     }
-                    MapPolyline(coordinates: [holes[i].greenPos, holes[i].teePos])
+                    MapPolyline(coordinates: [markers[i].greenPos, markers[i].teePos])
                         .stroke(.orange, lineWidth: 2)
                 }
                 
@@ -45,22 +41,18 @@ struct DragHolesView: View {
             
                 .safeAreaInset(edge: .top) {
                     HStack {
-                        Button("Spara") {
-                            let newCourse = Course(name: "Test", holes: holes)
-                            moc.insert(newCourse)
-                            dismiss()
-                        }
+                        Text("Lägg till hål")
                         Divider().frame(maxHeight: 15)
                         Text("Nuvarande hål \(currentHole)")
                         Button("+") {
-                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: holes[currentHole-1].greenPos, teePos: holes[currentHole-1].greenPos)
-                            holes.append(newHoleMarker)
+                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
+                            markers.append(newHoleMarker)
                             currentHole += 1
-                        }.disabled(holes.count == 18)
+                        }.disabled(markers.count == 18)
                         Button("-") {
-                            holes.removeLast()
+                            markers.removeLast()
                             currentHole -= 1
-                        }.disabled(holes.count == 1)
+                        }.disabled(markers.count == 1)
                     }.frame(maxWidth: .infinity).padding(.bottom).background(.orange.gradient)
                 }
         }
@@ -79,6 +71,43 @@ let eaglekorten = [
 enum MarkerType {
     case green, tee
 }
+
+@Observable
+class HoleData {
+    static func == (lhs: HoleData, rhs: HoleData) -> Bool {
+        lhs.num == rhs.num
+    }
+    
+    let num: Int
+    var greenPos: CLLocationCoordinate2D
+    var teePos: CLLocationCoordinate2D
+    
+   
+    // Camera
+    var camPos: MapCameraPosition
+    
+    func resetCamPos() {
+        camPos = startCamPos
+    }
+    var camPosIsDefault: Bool {
+        camPos == startCamPos
+    }
+    
+    init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
+        self.num = num
+        self.greenPos = greenPos
+        self.teePos = teePos
+        self.camPos = GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
+    }
+    
+    private var startCamPos: MapCameraPosition {
+        GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
+    }
+    
+    
+    
+}
+
 
 struct MarkerView: View {
     var proxy: MapProxy
