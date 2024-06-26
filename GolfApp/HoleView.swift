@@ -27,7 +27,7 @@ struct HoleView: View {
     
     
     var body: some View {
-        HoleMapView(hole: $hole, camPos: $camPos, scopeData: $scopeData)
+        HoleMapView(hole: $hole, scopeData: $scopeData)
             .safeAreaInset(edge: .bottom) {
                 HStack {
                     ZStack {
@@ -65,10 +65,10 @@ struct HoleView: View {
                     ZStack {
                         OpacityRectangle()
                         Button {
-                            withAnimation { hole.resetCamPos(camPos: &camPos) }
+                            withAnimation { hole.resetCamPos() }
                         } label: {
                             Image(systemName: "arrow.circlepath").font(.title).frame(width: 50, height: 50)
-                        }.disabled(hole.camPosIsDefault(camPos: camPos))
+                        }.disabled(hole.camPosIsDefault)
                     }.frame(maxWidth: 60)
                     Spacer()
                     ZStack {

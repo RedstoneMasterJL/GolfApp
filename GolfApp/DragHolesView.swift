@@ -17,10 +17,14 @@ struct DragHolesView: View {
     
     @State var currentHole = 1
 
-    init() {
-        markers = [
-            HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
-        ]
+    init(_ markers: [HoleData]? = nil) {
+        if let markers = markers {
+            self.markers = markers
+        } else {
+            self.markers = [
+                HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
+            ]
+        }
     }
     
     var body: some View {
@@ -74,9 +78,6 @@ enum MarkerType {
 
 @Observable
 class HoleData {
-    static func == (lhs: HoleData, rhs: HoleData) -> Bool {
-        lhs.num == rhs.num
-    }
     
     let num: Int
     var greenPos: CLLocationCoordinate2D
