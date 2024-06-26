@@ -82,5 +82,5 @@ struct HoleMapView: View {
 }
 
 #Preview {
-    HoleView(holes: albatross18holes)
+    HoleView(holes: toHoleDataArray(holes: albatross18holes))
 }

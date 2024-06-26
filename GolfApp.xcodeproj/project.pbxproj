@@ -10,6 +10,7 @@
 		7600103D2C282F3C00E20CE8 /* ScopeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7600103C2C282F3C00E20CE8 /* ScopeData.swift */; };
 		7600103F2C29BD5700E20CE8 /* DragHolesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7600103E2C29BD5700E20CE8 /* DragHolesView.swift */; };
 		76735F352C2B0E8A003303B6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76735F342C2B0E8A003303B6 /* HomeView.swift */; };
+		76B475FF2C2C16D9000DE86D /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76B475FE2C2C16D9000DE86D /* MarkerView.swift */; };
 		76BB08012C23288300A5C559 /* GolfAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76BB08002C23288300A5C559 /* GolfAppApp.swift */; };
 		76BB08072C23288600A5C559 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76BB08062C23288600A5C559 /* Assets.xcassets */; };
 		76BB080B2C23288600A5C559 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76BB080A2C23288600A5C559 /* Preview Assets.xcassets */; };
@@ -25,6 +26,7 @@
 		7600103C2C282F3C00E20CE8 /* ScopeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopeData.swift; sourceTree = "<group>"; };
 		7600103E2C29BD5700E20CE8 /* DragHolesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragHolesView.swift; sourceTree = "<group>"; };
 		76735F342C2B0E8A003303B6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		76B475FE2C2C16D9000DE86D /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
 		76BB07FD2C23288300A5C559 /* GolfApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GolfApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76BB08002C23288300A5C559 /* GolfAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GolfAppApp.swift; sourceTree = "<group>"; };
 		76BB08062C23288600A5C559 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				76BB08002C23288300A5C559 /* GolfAppApp.swift */,
 				76BB081F2C26F36C00A5C559 /* HoleView.swift */,
 				7600103E2C29BD5700E20CE8 /* DragHolesView.swift */,
+				76B475FE2C2C16D9000DE86D /* MarkerView.swift */,
 				76BB08132C234A3400A5C559 /* HoleMapView.swift */,
 				7600103C2C282F3C00E20CE8 /* ScopeData.swift */,
 				76BB08192C25FE6400A5C559 /* Binding+.swift */,
@@ -177,6 +180,7 @@
 				76BB08162C235BEE00A5C559 /* SearchableMap.swift in Sources */,
 				76BB08012C23288300A5C559 /* GolfAppApp.swift in Sources */,
 				76BB081E2C26085600A5C559 /* DraggablePin.swift in Sources */,
+				76B475FF2C2C16D9000DE86D /* MarkerView.swift in Sources */,
 				76BB08142C234A3400A5C559 /* HoleMapView.swift in Sources */,
 				76735F352C2B0E8A003303B6 /* HomeView.swift in Sources */,
 				76BB081A2C25FE6500A5C559 /* Binding+.swift in Sources */,

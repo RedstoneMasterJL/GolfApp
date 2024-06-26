@@ -8,60 +8,7 @@
 import SwiftUI
 import MapKit
 import SwiftData
-//
-//extension CLLocationCoordinate2D: Codable {
-//    enum CodingKeys: String, CodingKey {
-//        case latitude
-//        case longitude
-//    }
-//    
-//    // Initialize from decoder
-//    public init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        let latitude = try container.decode(CLLocationDegrees.self, forKey: .latitude)
-//        let longitude = try container.decode(CLLocationDegrees.self, forKey: .longitude)
-//        self.init(latitude: latitude, longitude: longitude)
-//    }
-//    
-//    // Encode to encoder
-//    public func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//        try container.encode(latitude, forKey: .latitude)
-//        try container.encode(longitude, forKey: .longitude)
-//    }
-//}
-//
-//
-//@Model
-//class HoleData {
-//
-//    let num: Int
-//    var greenPos: CLLocationCoordinate2D
-//    var teePos: CLLocationCoordinate2D
-//    
-//   
-//    // Camera
-//    //var camPos: MapCameraPosition
-//    
-//    func resetCamPos(camPos: inout MapCameraPosition) {
-//        camPos = startCamPos
-//    }
-//    func camPosIsDefault(camPos: MapCameraPosition) -> Bool {
-//        camPos == startCamPos
-//    }
-//    
-//    init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
-//        self.num = num
-//        self.greenPos = greenPos
-//        self.teePos = teePos
-//        //self.camPos = GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
-//    }
-//    
-//    private var startCamPos: MapCameraPosition {
-//        GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
-//    }
-//}
-//
+
 func startCamPos(centerPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D, teeGreenDistance: Double) -> MapCameraPosition {
     .camera(MapCamera(MKMapCamera(lookingAtCenter: centerPos, fromEyeCoordinate: teePos, eyeAltitude: teeGreenDistance * 2.5)))
 }
@@ -80,25 +27,103 @@ func resetCamPos(_ camPos: inout MapCameraPosition, to defaultCamPos: MapCameraP
 func camPosIsDefault(_ camPos: MapCameraPosition, with defaultCamPos: MapCameraPosition) -> Bool {
     camPos == defaultCamPos
 }
-//
+
 let albatross18holes = [
 
-    HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775), teePos: CLLocationCoordinate2D(latitude: 57.78032, longitude: 11.95332)),
-    HoleData(num: 2, greenPos: CLLocationCoordinate2D(latitude: 57.78239, longitude: 11.94944), teePos: CLLocationCoordinate2D(latitude: 57.78216, longitude: 11.94756)),
-    HoleData(num: 3, greenPos: CLLocationCoordinate2D(latitude: 57.78476, longitude: 11.94776), teePos: CLLocationCoordinate2D(latitude: 57.78260, longitude: 11.94981)),
-    HoleData(num: 4, greenPos: CLLocationCoordinate2D(latitude: 57.78211, longitude: 11.94611), teePos: CLLocationCoordinate2D(latitude: 57.78496, longitude: 11.94720)),
-    HoleData(num: 5, greenPos: CLLocationCoordinate2D(latitude: 57.78102, longitude: 11.94500), teePos: CLLocationCoordinate2D(latitude: 57.78171, longitude: 11.94645))
+    Hole(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78184, longitude: 11.94775), teePos: CLLocationCoordinate2D(latitude: 57.78032, longitude: 11.95332)),
+    Hole(num: 2, greenPos: CLLocationCoordinate2D(latitude: 57.78239, longitude: 11.94944), teePos: CLLocationCoordinate2D(latitude: 57.78216, longitude: 11.94756)),
+    Hole(num: 3, greenPos: CLLocationCoordinate2D(latitude: 57.78476, longitude: 11.94776), teePos: CLLocationCoordinate2D(latitude: 57.78260, longitude: 11.94981)),
+    Hole(num: 4, greenPos: CLLocationCoordinate2D(latitude: 57.78211, longitude: 11.94611), teePos: CLLocationCoordinate2D(latitude: 57.78496, longitude: 11.94720)),
+    Hole(num: 5, greenPos: CLLocationCoordinate2D(latitude: 57.78102, longitude: 11.94500), teePos: CLLocationCoordinate2D(latitude: 57.78171, longitude: 11.94645))
 
 ]
-//
-//
-//@Model
-//class Course {
-//    let name: String
-//    var holes: [HoleData]
-//    
-//    init(name: String, holes: [HoleData]) {
-//        self.name = name
-//        self.holes = holes
-//    }
-//}
+
+@Model
+class Course {
+    let name: String
+    var holes: [Hole]
+    
+    init(name: String, holes: [Hole]) {
+        self.name = name
+        self.holes = holes
+    }
+}
+
+// HoleData for use in DragHolesView and HoleView, HoleMapView
+@Observable
+class HoleData {
+    
+    let num: Int
+    var greenPos: CLLocationCoordinate2D
+    var teePos: CLLocationCoordinate2D
+    
+   
+    // Camera
+    var camPos: MapCameraPosition
+    
+    func resetCamPos() {
+        camPos = startCamPos
+    }
+    var camPosIsDefault: Bool {
+        camPos == startCamPos
+    }
+    
+    init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
+        self.num = num
+        self.greenPos = greenPos
+        self.teePos = teePos
+        self.camPos = GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
+    }
+    
+    private var startCamPos: MapCameraPosition {
+        GolfApp.startCamPos(centerPos: centerPos(greenPos: greenPos, teePos: teePos), teePos: teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: teePos, point2: greenPos))
+    }
+}
+
+// SwiftData hole
+@Model
+class Hole {
+    let num: Int
+    var greenPos: CLLocationCoordinate2D
+    var teePos: CLLocationCoordinate2D
+    init(num: Int, greenPos: CLLocationCoordinate2D, teePos: CLLocationCoordinate2D) {
+        self.num = num
+        self.greenPos = greenPos
+        self.teePos = teePos
+    }
+    
+    func toHoleData() -> HoleData {
+        HoleData(num: num, greenPos: greenPos, teePos: teePos)
+    }
+}
+
+func toHoleDataArray(holes: [Hole]) -> [HoleData] {
+    var holeDataArray: [HoleData] = []
+    for hole in holes {
+        let holeData = hole.toHoleData()
+        holeDataArray.append(holeData)
+    }
+    return holeDataArray
+}
+
+extension CLLocationCoordinate2D: Codable {
+    enum CodingKeys: String, CodingKey {
+        case latitude
+        case longitude
+    }
+    
+    // Initialize from decoder
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let latitude = try container.decode(CLLocationDegrees.self, forKey: .latitude)
+        let longitude = try container.decode(CLLocationDegrees.self, forKey: .longitude)
+        self.init(latitude: latitude, longitude: longitude)
+    }
+    
+    // Encode to encoder
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(latitude, forKey: .latitude)
+        try container.encode(longitude, forKey: .longitude)
+    }
+}
