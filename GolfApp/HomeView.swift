@@ -25,6 +25,7 @@ struct HomeView: View {
                     HStack {
                         Text(course.name)
                         NavigationLink("Gå", destination: HoleView(holes: toHoleDataArray(holes: course.holes)))
+                        NavigationLink("Redigera", destination: DragHolesView(toHoleDataArray(holes: course.holes)))
                     }
                 }
                 NavigationLink("ny") {

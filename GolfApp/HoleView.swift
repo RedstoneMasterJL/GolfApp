@@ -17,9 +17,12 @@ struct HoleView: View {
     let holes: [HoleData] // Hole array
     
     init(holes: [HoleData]) {
-        self.hole = holes[0] // First hole
-        self.holes = holes
-        self.camPos = startCamPos(centerPos: centerPos(greenPos: holes[0].greenPos, teePos: holes[0].teePos), teePos: holes[0].teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: holes[0].teePos, point2: holes[0].greenPos))
+        let sortedHoles = holes.sorted {
+            $0.num < $1.num
+        }
+        self.hole = sortedHoles[0] // First hole
+        self.holes = sortedHoles
+        self.camPos = startCamPos(centerPos: centerPos(greenPos: sortedHoles[0].greenPos, teePos: sortedHoles[0].teePos), teePos: sortedHoles[0].teePos, teeGreenDistance: distanceBetweenTwoPoints(point1: sortedHoles[0].teePos, point2: sortedHoles[0].greenPos))
     }
     
     @State var scopeData: ScopeData?
