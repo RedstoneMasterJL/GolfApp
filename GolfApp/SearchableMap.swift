@@ -44,7 +44,7 @@ import MapKit
                      }, label: {
                          Image(systemName: "arrow.right")
                      })
-                 }.rectBg()
+                 }.rectBg(expandable: true)
              }
          }
          .overlay {
