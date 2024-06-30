@@ -24,9 +24,9 @@ struct HomeView: View {
                 ForEach(courses) { course in
                     HStack {
                         Text(course.name)
-                        NavigationLink("Gå", destination: HoleView(holes: toHoleDataArray(holes: course.holes)))
-                        NavigationLink("Redigera", destination: DragHolesView(course.name, toHoleDataArray(holes: course.holes)) { holeDataArray, name in
-                            course.holes = toHoleArray(holeDataArray: holeDataArray)
+                        NavigationLink("Gå", destination: HoleView(holes: course.holes.toHoleData()))
+                        NavigationLink("Redigera", destination: DragHolesView(course.name, course.holes.toHoleData()) { holeDataArray, name in
+                            course.holes = holeDataArray.toHoles()
                             course.name = name
                         })
                     }

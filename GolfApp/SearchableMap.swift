@@ -52,7 +52,7 @@ import MapKit
              if let selectedLocation = selectedLocation {
                  if showDragHolesView {
                      DragHolesView("", [HoleData(num: 1, greenPos: selectedLocation.location, teePos: selectedLocation.location)]) { holeDataArray, name in
-                        let newCourse = Course(name: name, holes: toHoleArray(holeDataArray: holeDataArray))
+                         let newCourse = Course(name: name, holes: holeDataArray.toHoles())
                          moc.insert(newCourse)
                      }
                  }

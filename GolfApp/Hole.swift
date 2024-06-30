@@ -100,22 +100,25 @@ class Hole {
     }
 }
 
-func toHoleDataArray(holes: [Hole]) -> [HoleData] {
-    var holeDataArray: [HoleData] = []
-    for hole in holes {
-        let holeData = hole.toHoleData()
-        holeDataArray.append(holeData)
+// BETTER
+extension Array where Element == Hole {
+    func toHoleData() -> [HoleData] {
+        var holeData: [HoleData] = []
+        for hole in self {
+            holeData.append(HoleData(num: hole.num, greenPos: hole.greenPos, teePos: hole.teePos))
+        }
+        return holeData
     }
-    return holeDataArray
 }
 
-func toHoleArray(holeDataArray: [HoleData]) -> [Hole] {
-    var holeArray: [Hole] = []
-    for holeData in holeDataArray {
-        let hole = holeData.toHole()
-        holeArray.append(hole)
+extension Array where Element == HoleData {
+    func toHoles() -> [Hole] {
+        var holes: [Hole] = []
+        for holeData in self {
+            holes.append(Hole(num: holeData.num, greenPos: holeData.greenPos, teePos: holeData.teePos))
+        }
+        return holes
     }
-    return holeArray
 }
 
 extension CLLocationCoordinate2D: Codable {
