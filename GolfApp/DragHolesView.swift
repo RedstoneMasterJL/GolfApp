@@ -72,7 +72,7 @@ struct DragHolesView: View {
                             .rectBg()
                         Spacer()
                         Text("Eaglekorten")
-                            .rectBg()
+                            .rectBg(expandable: true)
                         
                         Spacer()
                         Text("")
