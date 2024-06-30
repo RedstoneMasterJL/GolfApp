@@ -16,6 +16,7 @@ import MapKit
 
      @Binding var showDragHolesView: Bool
      @Environment(\.dismiss) var dismiss
+     @Environment(\.modelContext) var moc
      var body: some View {
          Map(position: $position, selection: $selectedLocation) {
              ForEach(searchResults) { result in
@@ -50,7 +51,10 @@ import MapKit
          .overlay {
              if let selectedLocation = selectedLocation {
                  if showDragHolesView {
-                     DragHolesView([HoleData(num: 1, greenPos: selectedLocation.location, teePos: selectedLocation.location)])
+                     DragHolesView("", [HoleData(num: 1, greenPos: selectedLocation.location, teePos: selectedLocation.location)]) { holeDataArray, name in
+                        let newCourse = Course(name: name, holes: toHoleArray(holeDataArray: holeDataArray))
+                         moc.insert(newCourse)
+                     }
                  }
              }
          }

@@ -40,7 +40,7 @@ let albatross18holes = [
 
 @Model
 class Course {
-    let name: String
+    var name: String
     var holes: [Hole]
     
     init(name: String, holes: [Hole]) {

@@ -16,8 +16,8 @@ struct DragHolesView: View {
     @State var markers: [HoleData]
     
     @State var currentHole: Int
-
-    init(_ markers: [HoleData]? = nil) {
+    
+    init(_ name: String, _ markers: [HoleData]? = nil, closure: @escaping ([HoleData], String) -> ()) {
         if let markers = markers {
             self.markers = markers
             currentHole = markers.count
@@ -27,13 +27,17 @@ struct DragHolesView: View {
             ]
             currentHole = 1
         }
+        self.closure = closure
+        self.name = name
     }
     
     @State var showSaveSheet = false
-    @State var text = ""
+    @State var name: String
     @Environment(\.modelContext) var moc
     @Environment(\.dismiss) var dismiss
-
+    
+    var closure: ([HoleData], String) -> ()
+    
     var body: some View {
         MapReader { proxy in
             Map(position: $position, interactionModes: modes) {
@@ -50,51 +54,62 @@ struct DragHolesView: View {
                 
             }.mapStyle(.imagery(elevation: .realistic))
             
-//                .safeAreaInset(edge: .top) {
-//                    HStack {
-//                        Button("Spara") { showSaveSheet.toggle() }
-//                        Divider().frame(maxHeight: 15)
-//                        Text("Antal hål satta \(currentHole)")
-//                        Button("+") {
-//                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
-//                            markers.append(newHoleMarker)
-//                            currentHole += 1
-//                        }.disabled(markers.count == 18)
-//                        Button("-") {
-//                            markers.removeLast()
-//                            currentHole -= 1
-//                        }.disabled(markers.count == 1)
-//                    }.frame(maxWidth: .infinity).padding(.bottom).background(.orange.gradient)
-//                }
+            //                .safeAreaInset(edge: .top) {
+            //                    HStack {
+            //                        Button("Spara") { showSaveSheet.toggle() }
+            //                        Divider().frame(maxHeight: 15)
+            //                        Text("Antal hål satta \(currentHole)")
+            //                        Button("+") {
+            //                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
+            //                            markers.append(newHoleMarker)
+            //                            currentHole += 1
+            //                        }.disabled(markers.count == 18)
+            //                        Button("-") {
+            //                            markers.removeLast()
+            //                            currentHole -= 1
+            //                        }.disabled(markers.count == 1)
+            //                    }.frame(maxWidth: .infinity).padding(.bottom).background(.orange.gradient)
+            //                }
                 .safeAreaInset(edge: .bottom) {
                     HStack {
-                        Text("")
+                        
+                        Button("+") {
+                            let newHoleMarker = HoleData(num: currentHole + 1, greenPos: markers[currentHole-1].greenPos, teePos: markers[currentHole-1].greenPos)
+                            markers.append(newHoleMarker)
+                            currentHole += 1
+                        }.disabled(markers.count == 18)
                             .rectBg()
                         Spacer()
-                        Text("Eaglekorten")
+                        Text(name)
                             .rectBg(expandable: true)
                         
                         Spacer()
                         Text("")
+                        Button("-") {
+                            markers.removeLast()
+                            currentHole -= 1
+                        }.disabled(markers.count == 1)
                             .rectBg()
-
                     }.frame(maxHeight: 60).padding()
                 }
                 .safeAreaInset(edge: .top) {
                     HStack {
-                            Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
+                        Text(String(currentHole)).font(.largeTitle).fontDesign(.rounded)
                             .rectBg()
                         Spacer()
-                            Text("Spara")
+                        Button("Spara") {
+                            showSaveSheet.toggle()
+                        }
                             .rectBg()
                     }.frame(maxHeight: 60).padding()
                 }
         }.sheet(isPresented: $showSaveSheet, content: {
             VStack(content: {
-                TextField("Namn", text: $text)
+                TextField("Namn", text: $name)
                 Button("Spara") {
-                    let newCourse = Course(name: text, holes: toHoleArray(holeDataArray: markers))
-                    moc.insert(newCourse)
+                  // let newCourse = Course(name: text, holes: toHoleArray(holeDataArray: markers))
+                 //   moc.insert(newCourse)
+                    closure(markers, name)
                     dismiss()
                 }
             })
@@ -103,10 +118,12 @@ struct DragHolesView: View {
 }
 
 #Preview {
-    DragHolesView()
+    DragHolesView("") {_,_ in 
+        
+    }
 }
 
 let eaglekorten = [
-
+    
     HoleData(num: 1, greenPos: CLLocationCoordinate2D(latitude: 57.78191, longitude: 11.95473), teePos: CLLocationCoordinate2D(latitude: 57.78120, longitude: 11.95568))
 ]

@@ -38,7 +38,7 @@ struct MarkerView: View {
                     }
                 }
         }
-        //.frame(width: 70, height: 70) too big
+        .frame(width: 30, height: 30)
         .contentShape(.rect)
         .offset(translation)
         .gesture(
