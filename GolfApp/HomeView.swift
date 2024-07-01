@@ -56,7 +56,7 @@ struct HomeView: View {
 struct CourseCard: View {
     @Bindable var course: Course
     @FocusState var isEditing
-    @State var showEditView = true
+    @State var showEditView = false
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -68,21 +68,21 @@ struct CourseCard: View {
                 
                 Spacer()
 
-                //Text("\(course.holes.count) hål") //ska vara course.holes.count
-                Text("18 hål")
+                Text("\(course.holes.count) hål") //ska vara course.holes.count
+                //Text("18 hål")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 Spacer()
                 
             }//.background(.blue)
             Spacer()
-            //NavigationLink(destination: HoleView(holes: course.holes.toHoleData())) {
+            NavigationLink(destination: HoleView(holes: course.holes.toHoleData())) {
             Text("Spela").foregroundStyle(.blue)
                 .padding()
                 .background {
                     RoundedRectangle(cornerRadius: 20).foregroundStyle(.blue.secondary)
                 }
-            //}
+            }
             Menu {
                 Button("Byt namn") {
                     isEditing.toggle()
@@ -100,22 +100,10 @@ struct CourseCard: View {
         .rectBg(expandable: true)
         
         .sheet(isPresented: $showEditView, content: {
-            NavigationStack {
-                DragHolesView(course.name) { holeDataArray, name in
-                    
-                }
-                .navigationTitle(course.name)
-                .navigationBarTitleDisplayMode(.inline)
-//                .toolbar {
-//                    ToolbarItem(placement: .topBarLeading) {
-//                        Text(course)
-//                    }
-//                    ToolbarItem(placement: .topBarTrailing) {
-//                        Text("spara")
-//                    }
-//                }
-            }
-            
+            DragHolesView(course.name, course.holes.toHoleData()) { holeDataArray, name in
+                course.holes = holeDataArray.toHoles()
+                course.name = name
+            }.interactiveDismissDisabled()
         })
     }
 }
