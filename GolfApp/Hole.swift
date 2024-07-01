@@ -41,7 +41,7 @@ let albatross18holes = [
 @Model
 class Course {
     var name: String
-    var holes: [Hole]
+    @Relationship(deleteRule: .cascade) var holes: [Hole]
     
     init(name: String, holes: [Hole]) {
         self.name = name
